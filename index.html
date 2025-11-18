@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- saved from url=(0049)file:///C:/Users/USer/Downloads/LJ%20Notepad.html -->
 <html lang="en" style="--control-height: 69px; --background-url: url(&#39;https://www.hdwallpapers.in/download/bob_the_minion_in_coat_suit_with_guns_4k_hd_minions-3840x2160.jpg&#39;);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -641,6 +640,19 @@
             }, 0);
         }
 
+        // --- Added for Paste Formatting Fix ---
+        function stripFormattingOnPaste(e) {
+            // Prevent the default paste action which includes formatting
+            e.preventDefault();
+
+            // Get the plain text from the clipboard
+            const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+
+            // Insert the plain text into the contenteditable element at the cursor position
+            document.execCommand('insertText', false, text);
+        }
+        // --- End Paste Formatting Fix ---
+
         // --- 3. QUICK NOTE BUTTONS LOGIC ---
         function fillNotepad(contentDivId, noteHtml) {
             document.getElementById(contentDivId).innerHTML = noteHtml;
@@ -806,6 +818,9 @@
                 contentDiv.addEventListener('mouseup', (e) => updateButtonVisualState(editorDivId));
                 contentDiv.addEventListener('keyup', (e) => updateButtonVisualState(editorDivId));
                 contentDiv.addEventListener('click', (e) => updateButtonVisualState(editorDivId));
+                // NEW: Apply paste fix to Quick Notes Editor
+                contentDiv.addEventListener('paste', stripFormattingOnPaste);
+                
                 contentWrapper.appendChild(contentDiv);      
 
                 const zoomButton = document.createElement('button');
@@ -872,6 +887,8 @@
             modalContentArea.onmouseup = () => updateButtonVisualState('zoom-modal-content-area');
             modalContentArea.onkeyup = () => updateButtonVisualState('zoom-modal-content-area');
             modalContentArea.onclick = () => updateButtonVisualState('zoom-modal-content-area');
+            // NEW: Apply paste fix to Zoom Modal
+            modalContentArea.onpaste = stripFormattingOnPaste;
 
 
             const mainEditorContentDiv = document.getElementById(`editor-content-${index}`);
@@ -902,6 +919,7 @@
 
             modalContentArea.oninput = null;
             modalContentArea.onblur = null;
+            modalContentArea.onpaste = null; // Clean up paste listener
             activeZoomNoteIndex = null;
             modal.style.display = 'none';
         }
@@ -1266,6 +1284,8 @@
             contentDiv.addEventListener('mouseup', (e) => updateButtonVisualState(contentDivId));
             contentDiv.addEventListener('keyup', (e) => updateButtonVisualState(contentDivId));
             contentDiv.addEventListener('click', (e) => updateButtonVisualState(contentDivId));
+            // NEW: Apply paste fix to new notepads
+            contentDiv.addEventListener('paste', stripFormattingOnPaste);
             
             if (withButtons) {
                 populateQuickNoteButtons(noteId);
@@ -1332,6 +1352,8 @@
                     contentDiv.addEventListener('mouseup', () => updateButtonVisualState(contentDivId));
                     contentDiv.addEventListener('keyup', () => updateButtonVisualState(contentDivId));
                     contentDiv.addEventListener('click', () => updateButtonVisualState(contentDivId));
+                    // NEW: Apply paste fix to preset/existing notepads
+                    contentDiv.addEventListener('paste', stripFormattingOnPaste);
                 }
                 
                 // Ensure the notepad is below the sticky toolbar
