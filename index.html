@@ -14,7 +14,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f0f0f0;
+            background-color: #5C5C5C;
             user-select: none;
             background-size: cover;
             background-repeat: repeat;
@@ -199,6 +199,7 @@
             padding: 10px;
             display: flex;
             flex-direction: column;
+            overflow-y: auto;
         }
         /* --- Formatting Buttons & Visual State --- */
         .button-group {
@@ -543,6 +544,14 @@
         ];
 
         // --- 2. UNIVERSAL FORMATTING LOGIC & VISUAL STATE ---
+        
+        // NEW FUNCTION: Strips formatting on paste
+        function handlePaste(e) {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+            document.execCommand('insertText', false, text);
+        }
+
         function updateButtonVisualState(contentDivId) {
             const contentDiv = document.getElementById(contentDivId);
             if (!contentDiv) return;
@@ -639,19 +648,6 @@
                 }
             }, 0);
         }
-
-        // --- Added for Paste Formatting Fix ---
-        function stripFormattingOnPaste(e) {
-            // Prevent the default paste action which includes formatting
-            e.preventDefault();
-
-            // Get the plain text from the clipboard
-            const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-
-            // Insert the plain text into the contenteditable element at the cursor position
-            document.execCommand('insertText', false, text);
-        }
-        // --- End Paste Formatting Fix ---
 
         // --- 3. QUICK NOTE BUTTONS LOGIC ---
         function fillNotepad(contentDivId, noteHtml) {
@@ -818,9 +814,7 @@
                 contentDiv.addEventListener('mouseup', (e) => updateButtonVisualState(editorDivId));
                 contentDiv.addEventListener('keyup', (e) => updateButtonVisualState(editorDivId));
                 contentDiv.addEventListener('click', (e) => updateButtonVisualState(editorDivId));
-                // NEW: Apply paste fix to Quick Notes Editor
-                contentDiv.addEventListener('paste', stripFormattingOnPaste);
-                
+                contentDiv.addEventListener('paste', handlePaste); // ADDED: Paste handler
                 contentWrapper.appendChild(contentDiv);      
 
                 const zoomButton = document.createElement('button');
@@ -887,9 +881,7 @@
             modalContentArea.onmouseup = () => updateButtonVisualState('zoom-modal-content-area');
             modalContentArea.onkeyup = () => updateButtonVisualState('zoom-modal-content-area');
             modalContentArea.onclick = () => updateButtonVisualState('zoom-modal-content-area');
-            // NEW: Apply paste fix to Zoom Modal
-            modalContentArea.onpaste = stripFormattingOnPaste;
-
+            modalContentArea.addEventListener('paste', handlePaste); // ADDED: Paste handler
 
             const mainEditorContentDiv = document.getElementById(`editor-content-${index}`);
             if (mainEditorContentDiv) {
@@ -919,7 +911,7 @@
 
             modalContentArea.oninput = null;
             modalContentArea.onblur = null;
-            modalContentArea.onpaste = null; // Clean up paste listener
+            modalContentArea.removeEventListener('paste', handlePaste); // ADDED: Remove paste handler
             activeZoomNoteIndex = null;
             modal.style.display = 'none';
         }
@@ -1284,8 +1276,7 @@
             contentDiv.addEventListener('mouseup', (e) => updateButtonVisualState(contentDivId));
             contentDiv.addEventListener('keyup', (e) => updateButtonVisualState(contentDivId));
             contentDiv.addEventListener('click', (e) => updateButtonVisualState(contentDivId));
-            // NEW: Apply paste fix to new notepads
-            contentDiv.addEventListener('paste', stripFormattingOnPaste);
+            contentDiv.addEventListener('paste', handlePaste); // ADDED: Paste handler
             
             if (withButtons) {
                 populateQuickNoteButtons(noteId);
@@ -1352,8 +1343,7 @@
                     contentDiv.addEventListener('mouseup', () => updateButtonVisualState(contentDivId));
                     contentDiv.addEventListener('keyup', () => updateButtonVisualState(contentDivId));
                     contentDiv.addEventListener('click', () => updateButtonVisualState(contentDivId));
-                    // NEW: Apply paste fix to preset/existing notepads
-                    contentDiv.addEventListener('paste', stripFormattingOnPaste);
+                    contentDiv.addEventListener('paste', handlePaste); // ADDED: Paste handler for preset/initial notes
                 }
                 
                 // Ensure the notepad is below the sticky toolbar
