@@ -86,11 +86,11 @@
             align-items: center;
             margin-left: auto;
             background: rgba(0,0,0,0.5);
-            padding: 4px 12px; /* Reduced padding */
+            padding: 4px 12px;
             border-radius: 20px;
             color: white;
             font-weight: bold;
-            font-size: 13px; /* Smaller font */
+            font-size: 13px;
             gap: 8px;
         }
         #logout-btn {
@@ -99,20 +99,20 @@
             padding: 4px 8px !important;
         }
 
-        /* --- Master Control Panel (UPDATED FOR COMPACTNESS) --- */
+        /* --- Master Control Panel (Compact) --- */
         #controls {
             position: sticky;
             top: 0;
             left: 0;
             width: 100%;
-            padding: 8px 10px; /* Reduced padding from 15px */
+            padding: 8px 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
             z-index: 9999;
             display: flex;
-            gap: 8px; /* Reduced gap */
-            margin-bottom: 10px; /* Reduced margin */
+            gap: 8px;
+            margin-bottom: 10px;
             flex-wrap: wrap;
-            align-items: center; /* Center align items vertically */
+            align-items: center;
             backdrop-filter: blur(8px); 
             -webkit-backdrop-filter: blur(8px);
             background-color: rgba(255, 255, 255, 0.2); 
@@ -136,15 +136,14 @@
             background-position: center calc(var(--control-height) * -1); 
         }
 
-        /* COMPACT BUTTON STYLES */
         #controls button {
-            padding: 6px 12px; /* Smaller padding */
+            padding: 6px 12px;
             border: none;
             border-radius: 4px;
             background-color: rgba(0, 0, 0, 0.6); 
             color: white;
             font-weight: bold;
-            font-size: 13px; /* Smaller font size */
+            font-size: 13px;
             cursor: pointer;
             transition: background-color 0.2s, color 0.2s; 
             white-space: nowrap;
@@ -175,12 +174,12 @@
             background-color: rgba(0, 120, 240, 0.9);
         }
         .image-control input[type="url"] {
-            padding: 6px 8px; /* Smaller padding */
+            padding: 6px 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            width: 180px; /* Slightly narrower */
+            width: 180px;
             background-color: rgba(255, 255, 255, 0.8); 
-            font-size: 13px; /* Smaller font */
+            font-size: 13px;
         }
         
         /* --- Notepad Base Styles --- */
@@ -210,7 +209,7 @@
             cursor: grab;
             background-color: #f0f0f0;
             border-bottom: 1px solid #ccc;
-            padding: 4px 8px; /* Compact header */
+            padding: 4px 8px;
             font-weight: bold;
             font-size: 13px;
             display: flex;
@@ -264,7 +263,7 @@
         }
         .notepad-content {
             flex-grow: 1;
-            padding: 8px; /* Slightly reduced padding */
+            padding: 8px;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
@@ -277,7 +276,7 @@
             padding-bottom: 4px;
         }
         .button-group button {
-            padding: 4px 6px; /* Compact formatting buttons */
+            padding: 4px 6px;
             border: 1px solid #ddd;
             background-color: #eee;
             cursor: pointer;
@@ -543,9 +542,9 @@
     <div id="controls">
         <div id="toolbar-bg-mirror"></div> 
         <button id="create-empty-btn" onclick="createNewNotepad(false)">➕ Create Empty</button>
-        <button id="create-quick-btn" onclick="createNewNotepad(true)">📝 Create w/ Notes</button>
+        <button id="create-quick-btn" onclick="createNewNotepad(true)">📝 Create w/ Quick Notes</button>
 
-        <button id="edit-quick-notes-btn" onclick="toggleQuickNotesEditor()">✏️ Edit Notes</button>
+        <button id="edit-quick-notes-btn" onclick="toggleQuickNotesEditor()">✏️ Edit Quick Notes</button>
         
         <button id="save-preset-btn" onclick="saveNotepadPreset()" style="">💾 Save Preset (Cloud)</button>
 
@@ -638,21 +637,8 @@
                 const response = await fetch(`${GOOGLE_SCRIPT_URL}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
                 const result = await response.json();
 
-                // CHECK 1: Incorrect Password
-                if (result.status === 'wrong_password') {
-                    statusDiv.textContent = "❌ Incorrect Password.";
-                    return;
-                }
-
-                // CHECK 2: User Not Found OR General Error (Strict Blocking)
-                if (result.status === 'user_not_found' || result.status === 'error') {
-                    statusDiv.textContent = "WALA KA PANG ACCOUNT, SABIHIN MO KAY LJ CALUCIN!";
-                    return; 
-                }
-
-                // CHECK 3: Explicit Success Match
-                if (result.status === 'found' && result.data) {
-                    // Login Successful
+                // 1. SUCCESS: Only 'found' grants access
+                if (result.status === 'found') {
                     document.getElementById('login-overlay').style.display = 'none';
                     
                     currentUser = username;
@@ -660,20 +646,31 @@
                     document.getElementById('user-display').style.display = 'flex';
                     document.getElementById('current-user-name').textContent = `User: ${currentUser}`;
 
-                    // Reset Board to Clean State
                     resetToDefaults();
 
-                    // Load Everything from Cloud
-                    const success = loadNotepadPresetFromCloud(result.data);
-                    if (!success) createNewNotepad(false); 
-                } else {
-                    // Fallback for any other status (Treat as not found)
+                    if (result.data) {
+                         const success = loadNotepadPresetFromCloud(result.data);
+                         if (!success) createNewNotepad(false); 
+                    } else {
+                        createNewNotepad(false);
+                    }
+
+                // 2. ERROR: Wrong Password
+                } else if (result.status === 'wrong_password') {
+                    statusDiv.textContent = "❌ WRONG PASSWORD.";
+                    
+                // 3. ERROR: No Account
+                } else if (result.status === 'user_not_found') {
                     statusDiv.textContent = "WALA KA PANG ACCOUNT, SABIHIN MO KAY LJ CALUCIN!";
+                    
+                // 4. GENERIC ERROR: Any other status from the script
+                } else {
+                    statusDiv.textContent = "ERROR: Could not connect to data. Try again.";
                 }
 
             } catch (e) {
                 console.error(e);
-                statusDiv.textContent = "Error connecting to database.";
+                statusDiv.textContent = "Error connecting to database. Check network or script URL.";
             }
         }
 
