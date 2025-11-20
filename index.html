@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" style="--control-height: 69px; --background-url: url(&#39;https://www.hdwallpapers.in/download/bob_the_minion_in_coat_suit_with_guns_4k_hd_minions-3840x2160.jpg&#39;);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="en" style="--control-height: 69px; --background-url: url(&#39;https://www.hdwallpapers.in/download/bob_the_minion_in_coat_suit_with_guns_4k_hd_minions-3840x2160.jpg&#39;);"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NOTEPAD NI LJ!!</title>
     
     <style>
         :root {
-            /* Variable to hold the background URL for JavaScript and CSS */
             --background-url: none; 
         }
 
@@ -18,14 +17,80 @@
             user-select: none;
             background-size: cover;
             background-repeat: repeat;
-            background-attachment: fixed; /* Crucial for background alignment */
+            background-attachment: fixed;
             background-image: var(--background-url);
             transition: background-image 0.5s ease-in-out;
             min-height: 100vh; 
             overflow-x: hidden;
         }
 
-        /* --- Master Control Panel Styles: The Glassmorphism Container --- */
+        /* --- Login Modal Styles --- */
+        #login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 20000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        #login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            width: 300px;
+        }
+        #login-box h2 { margin-top: 0; color: #333; }
+        
+        #login-box input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box; 
+        }
+        
+        #login-box button {
+            width: 90%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #login-box button:hover { background-color: #0056b3; }
+        #login-status { margin-top: 15px; color: #d9534f; font-size: 14px; font-weight: bold; min-height: 20px;}
+
+        /* --- User Info Display in Controls --- */
+        #user-display {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            gap: 10px;
+        }
+        #logout-btn {
+            background-color: #dc3545 !important;
+            font-size: 12px !important;
+            padding: 5px 10px !important;
+        }
+
+        /* --- Master Control Panel --- */
         #controls {
             position: sticky;
             top: 0;
@@ -38,49 +103,34 @@
             gap: 15px;
             margin-bottom: 20px;
             flex-wrap: wrap;
-            /* Apply the blur effect to everything behind the control bar */
             backdrop-filter: blur(8px); 
             -webkit-backdrop-filter: blur(8px);
-            background-color: rgba(255, 255, 255, 0.2); /* Slight white tint for "frost" */
-            overflow: hidden; /* Important: prevents the mirror from bleeding outside */
+            background-color: rgba(255, 255, 255, 0.2); 
+            overflow: hidden; 
         }
         
-        /* --- Mirror Background for Darkened Contrast --- */
         #toolbar-bg-mirror {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* Place it behind the buttons */
-            
-            /* Match body's background settings */
+            z-index: -1; 
             background-image: var(--background-url);
             background-size: cover;
             background-repeat: repeat;
             background-attachment: fixed;
-            
-            /* Darken and increase contrast of the mirrored image */
             filter: brightness(60%) contrast(120%); 
             opacity: 0.8; 
-            
-            /* Flip the background vertically using transform: scaleY(-1) */
             transform: scaleY(-1);
-            
-            /* Adjust the background-position to align the top edge of the flipped image
-               with the top edge of the viewport (which is where the control bar is stuck). */
-            /* Since the body has fixed attachment, the background-position of the mirror 
-               must match the negative height of the controls bar (minus padding), 
-               so the image section behind the toolbar is correctly aligned when flipped. */
             background-position: center calc(var(--control-height) * -1); 
         }
 
-        /* --- Button Styles (Ensure they look good on the blurred background) --- */
         #controls button {
             padding: 10px 15px;
             border: none;
             border-radius: 5px;
-            background-color: rgba(0, 0, 0, 0.6); /* Dark base for good contrast */
+            background-color: rgba(0, 0, 0, 0.6); 
             color: white;
             font-weight: bold;
             cursor: pointer;
@@ -90,20 +140,18 @@
         }
         
         #controls button:hover {
-            background-color: rgba(0, 0, 0, 0.8); /* Darker hover */
+            background-color: rgba(0, 0, 0, 0.8);
         }
 
-        /* Specific override for Save Preset button */
         #save-preset-btn {
-            background-color: rgba(0, 0, 128, 0.7); /* Darker blue base */
+            background-color: rgba(0, 0, 128, 0.7); 
         }
         #save-preset-btn:hover {
             background-color: rgba(0, 0, 160, 0.9);
         }
         
-        /* Specific override for URL buttons */
         .image-control button {
-            background-color: rgba(0, 100, 200, 0.7); /* Mid-tone blue */
+            background-color: rgba(0, 100, 200, 0.7); 
         }
         .image-control button:hover {
             background-color: rgba(0, 120, 240, 0.9);
@@ -113,10 +161,10 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             width: 200px;
-            background-color: rgba(255, 255, 255, 0.8); /* Opaque input field */
+            background-color: rgba(255, 255, 255, 0.8); 
         }
         
-        /* --- Notepad Base Styles (Kept for completeness) --- */
+        /* --- Notepad Base Styles --- */
         .notepad {
             position: absolute;
             width: 300px;
@@ -209,7 +257,7 @@
             padding-bottom: 5px;
         }
         .button-group button {
-            padding: 5px 8px;
+            padding: 10px 15px;
             border: 1px solid #ddd;
             background-color: #eee;
             cursor: pointer;
@@ -221,11 +269,6 @@
             background-color: #e0e0e0;
         }
         
-        #formatting-buttons-note1, #formatting-buttons-note2 {
-            border-bottom: 1px solid #eee;
-            margin-bottom: 10px;
-        }
-
         .quick-notes-buttons {
             margin-bottom: 10px;
             border: 1px solid #ccc;
@@ -252,7 +295,6 @@
             background-color: #bee5eb;
         }
         
-        /* --- Rich Text Content Area Styles --- */
         .rich-text-content {
             flex-grow: 1;
             width: 100%;
@@ -265,11 +307,15 @@
             box-sizing: border-box;
             outline: none;
         }
-        .rich-text-content .large-text {
-            font-size: 1.2em;
-            font-weight: bold;
+        
+        .rich-text-content font[size="5"],
+        .editor-rich-text-content font[size="5"],
+        #zoom-modal-content-area font[size="5"],
+        .rich-text-content .large-text { 
+            font-size: 1.6em; 
             display: inline;
         }
+        
         /* --- Quick Notes Editor Styles --- */
         #quick-notes-editor {
             width: 800px;
@@ -286,7 +332,6 @@
             margin-left: auto;
             flex-wrap: wrap; 
         }
-        /* Custom styles for Quick Notes Editor buttons (Lighter hover effect) */
         #add-note-btn, #save-notes-btn {
             border: none;
             padding: 5px 10px;
@@ -297,22 +342,10 @@
             white-space: nowrap;
             color: white; 
         }
-        
-        #add-note-btn {
-            background-color: #28a745; /* Green */
-        }
-        #add-note-btn:hover {
-            background-color: #34c759; /* Lighter Green on hover */
-        }
-        
-        #save-notes-btn {
-            background-color: #007bff; /* Blue */
-        }
-        
-        #save-notes-btn:hover {
-            background-color: #4dabf5; /* Lighter Blue on hover */
-        }
-
+        #add-note-btn { background-color: #28a745; }
+        #add-note-btn:hover { background-color: #34c759; }
+        #save-notes-btn { background-color: #007bff; }
+        #save-notes-btn:hover { background-color: #4dabf5; }
 
         #quick-notes-editor .notepad-content {
             display: grid;
@@ -345,8 +378,8 @@
             align-items: center;
         }
         #quick-notes-editor .formatting-row button {
-            padding: 3px 6px; 
-            font-size: 11px; 
+            padding: 5px 8px; 
+            font-size: 12px; 
             border: 1px solid #ddd;
             background-color: #eee;
             border-radius: 3px;
@@ -411,9 +444,8 @@
             line-height: 1;
             z-index: 10;
         }
-        .zoom-btn:hover {
-            color: #007bff;
-        }
+        .zoom-btn:hover { color: #007bff; }
+
         /* --- Zoom Modal Style --- */
         #content-zoom-modal {
             display: none; 
@@ -470,33 +502,50 @@
             border-radius: 3px;
             transition: background-color 0.1s, color 0.1s;
         }
-        #zoom-modal-toolbar button:hover {
-            background-color: #e0e0e0;
-        }
+        #zoom-modal-toolbar button:hover { background-color: #e0e0e0; }
     </style>
 </head>
 <body>
+    <div id="login-overlay">
+        <div id="login-box">
+            <h2>Notepad Login</h2>
+            <p>Enter credentials to load your layout.</p>
+            
+            <input type="text" id="username-input" placeholder="Username">
+            <input type="password" id="password-input" placeholder="Password" onkeydown="if(event.key==='Enter') loginUser()">
+            
+            <button onclick="loginUser()">Login / Register</button>
+            <div id="login-status"></div>
+        </div>
+    </div>
+
     <div id="controls">
-        <div id="toolbar-bg-mirror"></div> <button id="create-empty-btn" onclick="createNewNotepad(false)">➕ Create Empty Notepad</button>
+        <div id="toolbar-bg-mirror"></div> 
+        <button id="create-empty-btn" onclick="createNewNotepad(false)">➕ Create Empty Notepad</button>
         <button id="create-quick-btn" onclick="createNewNotepad(true)">📝 Create Notepad with Quick Notes</button>
 
         <button id="edit-quick-notes-btn" onclick="toggleQuickNotesEditor()">✏️ Edit Quick Notes</button>
         
-        <button id="save-preset-btn" onclick="saveNotepadPreset()" style="">💾 Save Layout Preset</button>
+        <button id="save-preset-btn" onclick="saveNotepadPreset()" style="">💾 Save Layout (Cloud)</button>
 
         <div class="image-control">
             <input type="url" id="bg-url" placeholder="Paste image URL (e.g., Imgur)" size="30">
             <button id="set-bg-btn" onclick="setBackgroundImage()">🖼️ Set Background</button>
             <button id="clear-bg-btn" onclick="clearBackgroundImage()">❌ Clear</button>
         </div>
+
+        <div id="user-display" style="display:none;">
+            <span id="current-user-name">Guest</span>
+            <button id="logout-btn" onclick="logoutUser()">Logout</button>
+        </div>
     </div>
     
     <div id="quick-notes-editor" class="notepad" style="display: none;">
         <div class="notepad-header">
-            <span class="notepad-title" data-draggable-handle="true">Quick Notes Editor (Edit Label and Content)</span>
+            <span class="notepad-title" data-draggable-handle="true">Quick Notes Editor</span>
             
             <div id="editor-header-buttons">
-                <button id="save-notes-btn" onclick="saveQuickNotes()">💾 Save Changes &amp; Refresh Notepads</button>
+                <button id="save-notes-btn" onclick="saveQuickNotes()">💾 Save Changes</button>
                 <button id="add-note-btn" onclick="addNewQuickNote()">➕ Add New Note</button>
                 <button class="close-btn" onclick="toggleQuickNotesEditor()">X</button>
             </div>
@@ -505,9 +554,6 @@
             </div>
     </div>
 
-    
-    
-
     <div id="content-zoom-modal">
         <div id="zoom-modal-content">
             <div id="zoom-modal-header">
@@ -515,10 +561,10 @@
                 <button class="close-btn" onclick="closeZoomModal()">X</button>
             </div>
             <div class="formatting-row" id="zoom-modal-toolbar">
-                <button data-command="bold" onclick="formatText(&#39;zoom-modal-content-area&#39;, &#39;bold&#39;)"><b>B</b></button>
-                <button data-command="italic" onclick="formatText(&#39;zoom-modal-content-area&#39;, &#39;italic&#39;)"><i>I</i></button>
-                <button data-command="underline" onclick="formatText(&#39;zoom-modal-content-area&#39;, &#39;underline&#39;)"><u>U</u></button>
-                <button data-command="custom-large-text" onclick="formatText(&#39;zoom-modal-content-area&#39;, &#39;custom-large-text&#39;)">Big Text</button>
+                <button data-command="bold" onclick="formatText('zoom-modal-content-area', 'bold')"><b>B</b></button>
+                <button data-command="italic" onclick="formatText('zoom-modal-content-area', 'italic')"><i>I</i></button>
+                <button data-command="underline" onclick="formatText('zoom-modal-content-area', 'underline')"><u>U</u></button>
+                <button data-command="custom-large-text" onclick="formatText('zoom-modal-content-area', 'custom-large-text')">Big Text</button>
             </div>
             <div id="zoom-modal-content-area" contenteditable="true"></div>
         </div>
@@ -526,6 +572,8 @@
 
     <script>
         // --- 1. GLOBAL VARIABLES & INITIAL SETUP ---
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvdYP2SVZ_OWKeFGeaFOiRN_fOk68JVSQq0aPQNgospQszkwl2jCBlwiDT2Fr-kbXo0g/exec"; 
+
         let zIndexCounter = 1000;
         let notepadCounter = 2;
         let activeZoomNoteIndex = null;
@@ -534,20 +582,112 @@
         let CONTROL_BAR_HEIGHT = 80; 
         const MIN_NOTEPAD_SIZE = 100;
         const SCROLLBAR_WIDTH = 17;
+        
+        let internalClipboardHTML = null;
+        let currentUser = null; 
+        let currentPassword = null; 
 
         let quickNotes = [
-            { label: "Opening:", text: "<span class='large-text'>Welcome to HP America’s favorite PC brand!</span> It’s our Black Friday sale, and I’m <b>Rain</b>. I've read your concern, and I'm glad to assist!" },
-            { label: "Probing:", text: "(Optional) Just wondering — do you currently own a computer / printer / laptop?<br>Let’s make sure we find the perfect device / supplies for you—mind if I ask a few quick questions about what you need? This is a really long script to test the maximum height restriction and ensure the scroll bar appears and the magnifying glass is useful. We need to make sure this text is long enough to exceed the 70px maximum height." },
+            { label: "Opening:", text: "<font size='5'>Welcome to HP America’s favorite PC brand!</font> It’s our Black Friday sale, and I’m <b>Rain</b>. I've read your concern, and I'm glad to assist!" },
+            { label: "Probing:", text: "(Optional) Just wondering — do you currently own a computer / printer / laptop?<br>Let’s make sure we find the perfect device / supplies for you—mind if I ask a few quick questions about what you need? This is a really long script to test the maximum height restriction." },
             { label: "Closing:", text: "Thank attention for choosing HP!" },
             { label: "Sale 2:", text: "Welcome to HP - America's favorite PC brand! It's our Clear Warehouse Sale, I'm <b>Rain</b>. I've read your concern, and I'm glad to assist!" },
             { label: "Ref Link", text: "Link to internal knowledge base: <a href='https://internal.hp.com/kb/...' target='_blank'>https://internal.hp.com/kb/...</a>" }
         ];
 
-        // --- 2. UNIVERSAL FORMATTING LOGIC & VISUAL STATE ---
+        // --- 2. LOGIN / LOGOUT LOGIC ---
         
-        // NEW FUNCTION: Strips formatting on paste
+        async function loginUser() {
+            const usernameInput = document.getElementById('username-input');
+            const passwordInput = document.getElementById('password-input');
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            const statusDiv = document.getElementById('login-status');
+            
+            if (!username || !password) {
+                statusDiv.textContent = "Please enter username AND password.";
+                return;
+            }
+
+            statusDiv.textContent = "Connecting...";
+            
+            try {
+                // Fetch user data from Google Sheet with Password
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+                const result = await response.json();
+
+                if (result.status === 'wrong_password') {
+                    statusDiv.textContent = "❌ Incorrect Password.";
+                    return;
+                }
+
+                // Login Successful
+                document.getElementById('login-overlay').style.display = 'none';
+                
+                // Set current user & password
+                currentUser = username;
+                currentPassword = password;
+                document.getElementById('user-display').style.display = 'flex';
+                document.getElementById('current-user-name').textContent = `User: ${currentUser}`;
+
+                // Clear any existing notepads (reset board)
+                document.querySelectorAll('.notepad').forEach(notepad => {
+                    if (notepad.id !== 'quick-notes-editor') notepad.remove();
+                });
+
+                // If user exists, load their data
+                if (result.status === 'found' && result.data) {
+                    const success = loadNotepadPresetFromCloud(result.data);
+                    if (!success) createNewNotepad(false); 
+                } else if (result.status === 'new_user') {
+                    // New user, start fresh
+                    createNewNotepad(false);
+                    alert(`Welcome, ${username}! A new account will be created for you when you click 'Save Layout'.`);
+                }
+
+            } catch (e) {
+                console.error(e);
+                statusDiv.textContent = "Error connecting to database.";
+            }
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            currentPassword = null;
+            document.getElementById('user-display').style.display = 'none';
+            document.getElementById('login-overlay').style.display = 'flex';
+            document.getElementById('username-input').value = '';
+            document.getElementById('password-input').value = '';
+            document.getElementById('login-status').textContent = '';
+            
+            // Clear board visually
+            document.querySelectorAll('.notepad').forEach(notepad => {
+                if (notepad.id !== 'quick-notes-editor') notepad.remove();
+            });
+        }
+
+        // --- 3. UNIVERSAL FORMATTING LOGIC ---
+
+        function handleCopy() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const fragment = range.cloneContents();
+                const div = document.createElement('div');
+                div.appendChild(fragment);
+                internalClipboardHTML = div.innerHTML;
+            } else {
+                internalClipboardHTML = null;
+            }
+        }
+
         function handlePaste(e) {
             e.preventDefault();
+            if (internalClipboardHTML) {
+                document.execCommand('insertHTML', false, internalClipboardHTML);
+                internalClipboardHTML = null; 
+                return; 
+            }
             const text = (e.clipboardData || window.clipboardData).getData('text/plain');
             document.execCommand('insertText', false, text);
         }
@@ -557,7 +697,6 @@
             if (!contentDiv) return;
 
             let buttonContainer = null;
-            
             if (contentDivId.startsWith('editor-content-')) {
                  buttonContainer = contentDiv.closest('.content-wrapper').querySelector('.formatting-row');
             } else if (contentDivId === 'zoom-modal-content-area') {
@@ -579,20 +718,9 @@
                     button.classList.toggle('active', isActive);
                 }
                 else if (btnCommand === 'custom-large-text') {
-                    let isActive = false;
-                    const selection = window.getSelection();
-
-                    if (selection.rangeCount > 0) {
-                        const range = selection.getRangeAt(0);
-                        const commonAncestor = range.commonAncestorContainer;
-                        const container = commonAncestor.nodeType === 3 ? commonAncestor.parentNode.closest('.rich-text-content, .editor-rich-text-content, #zoom-modal-content-area') : commonAncestor.closest('.rich-text-content, .editor-rich-text-content, #zoom-modal-content-area');
-                        
-                        if (container) {
-                            const parentElement = commonAncestor.nodeType === 3 ? commonAncestor.parentNode : commonAncestor;
-                            isActive = parentElement.closest('.large-text') !== null && parentElement.closest('.large-text').closest('.rich-text-content, .editor-rich-text-content, #zoom-modal-content-area') === container;
-                        }
-                    }
-                    button.classList.toggle('active', isActive);
+                    const commandValue = document.queryCommandValue('fontSize');
+                    const isBig = commandValue === '5'; 
+                    button.classList.toggle('active', isBig);
                 }
             });
         }
@@ -600,43 +728,23 @@
         function formatText(contentDivId, command, value = null) {
             const contentDiv = document.getElementById(contentDivId);
             if (!contentDiv) return;
-
             const parentElement = contentDiv.closest('.notepad') || contentDiv.closest('#content-zoom-modal');
-            if (parentElement) {
-                bringToFront(parentElement);
-            }
-            
+            if (parentElement) bringToFront(parentElement);
             contentDiv.focus();
 
             setTimeout(() => {
                 if (command === 'bold' || command === 'italic' || command === 'underline') {
                     document.execCommand(command, false, value);
-                    updateButtonVisualState(contentDivId);
                 }
                 else if (command === 'custom-large-text') {
-                    const selection = window.getSelection();
-
-                    if (selection.rangeCount > 0 && !selection.isCollapsed) {
-                        const range = selection.getRangeAt(0);
-                        const commonAncestor = range.commonAncestorContainer;
-                        const parentElement = commonAncestor.nodeType === 3 ? commonAncestor.parentNode : commonAncestor;
-                        const existingSpan = parentElement.closest('.large-text');
-
-                        if (existingSpan) {
-                            while (existingSpan.firstChild) {
-                                existingSpan.parentNode.insertBefore(existingSpan.firstChild, existingSpan);
-                            }
-                            existingSpan.remove();
-                        } else {
-                            const span = document.createElement('span');
-                            span.classList.add('large-text');
-                            span.appendChild(range.extractContents());
-                            range.insertNode(span);
-                        }
-                        selection.removeAllRanges();
+                    const isBig = document.queryCommandValue('fontSize') === '5';
+                    if (isBig) {
+                        document.execCommand('fontSize', false, '2'); 
+                    } else {
+                        document.execCommand('fontSize', false, '5'); 
                     }
-                    updateButtonVisualState(contentDivId);
                 }
+                updateButtonVisualState(contentDivId);
                 contentDiv.focus();
                 
                 if (contentDivId.startsWith('editor-content-')) {
@@ -649,16 +757,16 @@
             }, 0);
         }
 
-        // --- 3. QUICK NOTE BUTTONS LOGIC ---
+        // --- 4. QUICK NOTE BUTTONS LOGIC ---
         function fillNotepad(contentDivId, noteHtml) {
             document.getElementById(contentDivId).innerHTML = noteHtml;
             const contentDiv = document.getElementById(contentDivId);
+            contentDiv.focus();
+            document.execCommand('defaultParagraphSeparator', false, 'br');
             const range = document.createRange();
             const sel = window.getSelection();
-
             range.selectNodeContents(contentDiv);
             range.collapse(false);
-
             sel.removeAllRanges();
             sel.addRange(range);
             contentDiv.focus();
@@ -668,13 +776,10 @@
         function populateQuickNoteButtons(noteId) {
             const buttonContainer = document.getElementById(`quick-notes-buttons-${noteId}`);
             const contentDivId = `text-${noteId}`;
-
             if (buttonContainer) {
-                // Clear existing buttons
                 while (buttonContainer.firstChild) {
                     buttonContainer.removeChild(buttonContainer.firstChild);
                 }
-
                 quickNotes.forEach(note => {
                     const button = document.createElement('button');
                     button.textContent = note.label;
@@ -694,61 +799,40 @@
             });
         }
 
-        // --- 4. QUICK NOTES EDITOR & PERSISTENCE LOGIC ---
+        // --- 5. EDITOR & PERSISTENCE ---
         function saveQuickNotes() {
             const editorContentRows = document.querySelectorAll('#quick-notes-editor .notepad-content > input[type="text"]');
-            
             editorContentRows.forEach((labelInput, index) => {
                 const contentDiv = document.getElementById(`editor-content-${index}`);
-                
                 if (quickNotes[index] && contentDiv) {
                     quickNotes[index].label = labelInput.value;
                     quickNotes[index].text = contentDiv.innerHTML;
                 }
             });
-            
-            try {
-                localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(quickNotes));
-                
-                refreshAllButtons(); 
-                
-                const saveBtn = document.getElementById('save-notes-btn');
-                const originalText = saveBtn.innerHTML;
-                saveBtn.innerHTML = '✅ Saved!';
-                setTimeout(() => {
-                    saveBtn.innerHTML = originalText;
-                }, 1000);
-
-            } catch (e) {
-                console.error('Could not save quick notes to local storage:', e);
-            }
+            localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(quickNotes));
+            refreshAllButtons(); 
+            const saveBtn = document.getElementById('save-notes-btn');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '✅ Saved!';
+            setTimeout(() => { saveBtn.innerHTML = originalText; }, 1000);
         }
 
         function loadQuickNotes() {
             try {
                 const savedNotes = localStorage.getItem(NOTES_STORAGE_KEY);
-                if (savedNotes) {
-                    quickNotes = JSON.parse(savedNotes);
-                }
-            } catch (e) {
-                console.warn('No quick notes found in local storage, using defaults.');
-            }
+                if (savedNotes) quickNotes = JSON.parse(savedNotes);
+            } catch (e) {}
         }
 
         function updateQuickNote(index, field, value, shouldSave = true) {
             if (quickNotes[index]) {
                 quickNotes[index][field] = value;
-                if (shouldSave) {
-                    saveQuickNotes(); 
-                }
+                if (shouldSave) saveQuickNotes(); 
             }
         }
 
         function addNewQuickNote() {
-            quickNotes.push({
-                label: `New Note ${quickNotes.length + 1}`,
-                text: "Paste your script here..."
-            });
+            quickNotes.push({ label: `New Note ${quickNotes.length + 1}`, text: "Paste script..." });
             populateQuickNotesEditor();
             saveQuickNotes();
             const editorContent = document.querySelector('#quick-notes-editor .notepad-content');
@@ -756,10 +840,7 @@
         }
 
         function deleteQuickNote(index) {
-            const label = quickNotes[index].label;
-            const isConfirmed = confirm(`Are you sure you want to delete the Quick Note: "${label}"?`);
-
-            if (isConfirmed) {
+            if (confirm(`Delete Quick Note?`)) {
                 quickNotes.splice(index, 1);
                 populateQuickNotesEditor();
                 saveQuickNotes();
@@ -768,19 +849,14 @@
 
         function populateQuickNotesEditor() {
             const editorContent = document.querySelector('#quick-notes-editor .notepad-content');
-            editorContent.innerHTML = '';
+            editorContent.innerHTML = '<strong>Button Label</strong><strong style="grid-column: 2 / 4;">Note Content & Actions</strong>';
             
-            editorContent.innerHTML += '<strong>Button Label</strong><strong style="grid-column: 2 / 4;">Note Content & Actions</strong>';
-
             quickNotes.forEach((note, index) => {
                 const editorDivId = `editor-content-${index}`;
-                
                 const labelInput = document.createElement('input');
                 labelInput.type = 'text';
                 labelInput.value = note.label;
-                labelInput.addEventListener('blur', (e) => {
-                    updateQuickNote(index, 'label', e.target.value, false); 
-                });
+                labelInput.addEventListener('blur', (e) => updateQuickNote(index, 'label', e.target.value, false));
                 labelInput.style.alignSelf = 'stretch'; 
                 labelInput.style.gridColumn = '1 / 2';
                 editorContent.appendChild(labelInput);      
@@ -803,24 +879,18 @@
                 contentDiv.classList.add('editor-rich-text-content');
                 contentDiv.setAttribute('contenteditable', 'true');
                 contentDiv.innerHTML = note.text;
-                
-                contentDiv.addEventListener('input', (e) => {
-                    updateQuickNote(index, 'text', e.target.innerHTML, false);
-                });
-                contentDiv.addEventListener('blur', (e) => {
-                    updateQuickNote(index, 'text', e.target.innerHTML, false);
-                });
-                
-                contentDiv.addEventListener('mouseup', (e) => updateButtonVisualState(editorDivId));
-                contentDiv.addEventListener('keyup', (e) => updateButtonVisualState(editorDivId));
-                contentDiv.addEventListener('click', (e) => updateButtonVisualState(editorDivId));
-                contentDiv.addEventListener('paste', handlePaste); // ADDED: Paste handler
+                contentDiv.addEventListener('input', (e) => updateQuickNote(index, 'text', e.target.innerHTML, false));
+                contentDiv.addEventListener('blur', (e) => updateQuickNote(index, 'text', e.target.innerHTML, false));
+                contentDiv.addEventListener('mouseup', () => updateButtonVisualState(editorDivId));
+                contentDiv.addEventListener('keyup', () => updateButtonVisualState(editorDivId));
+                contentDiv.addEventListener('click', () => updateButtonVisualState(editorDivId));
+                contentDiv.addEventListener('paste', handlePaste); 
+                contentDiv.addEventListener('copy', handleCopy); 
                 contentWrapper.appendChild(contentDiv);      
 
                 const zoomButton = document.createElement('button');
                 zoomButton.classList.add('zoom-btn');
                 zoomButton.innerHTML = '🔍';
-                zoomButton.title = 'Zoom Content';
                 zoomButton.onclick = () => openZoomModal(index);
                 contentWrapper.appendChild(zoomButton);
 
@@ -829,60 +899,55 @@
                 const actionContainer = document.createElement('div');
                 actionContainer.classList.add('icon-container');
                 actionContainer.style.gridColumn = '3 / 4'; 
-                actionContainer.style.alignSelf = 'stretch';
                 
                 const deleteButton = document.createElement('button');
                 deleteButton.classList.add('delete-note-btn');
                 deleteButton.textContent = '🗑️';
                 deleteButton.onclick = () => deleteQuickNote(index);
-
                 actionContainer.appendChild(deleteButton);
                 editorContent.appendChild(actionContainer);  
+                
+                setTimeout(() => {
+                    contentDiv.focus();
+                    document.execCommand('defaultParagraphSeparator', false, 'br');
+                    contentDiv.blur();
+                }, 10);
             });
         }
 
         function toggleQuickNotesEditor() {
             const editor = document.getElementById('quick-notes-editor');
-            
             if (editor.style.display === 'grid') {
                 editor.style.display = 'none';
             } else {
-                const viewportWidth = window.innerWidth;
                 const editorWidth = 800; 
-                let newLeft = (viewportWidth / 2) - (editorWidth / 2);
-                newLeft = Math.max(0, newLeft); 
+                let newLeft = Math.max(0, (window.innerWidth / 2) - (editorWidth / 2)); 
                 let newTop = CONTROL_BAR_HEIGHT + 50; 
-
                 editor.style.width = editorWidth + 'px';
                 editor.style.height = 500 + 'px';
-
                 editor.style.left = newLeft + 'px';
                 editor.style.top = newTop + 'px';
-                
                 populateQuickNotesEditor();
                 editor.style.display = 'grid';
                 bringToFront(editor);
             }
         }
 
-        // --- 5. ZOOM MODAL LOGIC ---
+        // --- 6. ZOOM MODAL LOGIC ---
         function openZoomModal(index) {
             activeZoomNoteIndex = index;
             const note = quickNotes[index];
-            
             const modal = document.getElementById('content-zoom-modal');
-            const modalTitle = document.getElementById('zoom-modal-title');
             const modalContentArea = document.getElementById('zoom-modal-content-area');
-            
-            modalTitle.textContent = `Editing Content for: "${note.label}"`;
+            document.getElementById('zoom-modal-title').textContent = `Editing: "${note.label}"`;
             modalContentArea.innerHTML = note.text;
-            
             modalContentArea.oninput = () => updateQuickNote(index, 'text', modalContentArea.innerHTML, false);
             modalContentArea.onmouseup = () => updateButtonVisualState('zoom-modal-content-area');
             modalContentArea.onkeyup = () => updateButtonVisualState('zoom-modal-content-area');
             modalContentArea.onclick = () => updateButtonVisualState('zoom-modal-content-area');
-            modalContentArea.addEventListener('paste', handlePaste); // ADDED: Paste handler
-
+            modalContentArea.addEventListener('paste', handlePaste); 
+            modalContentArea.addEventListener('copy', handleCopy);
+            
             const mainEditorContentDiv = document.getElementById(`editor-content-${index}`);
             if (mainEditorContentDiv) {
                  modalContentArea.onblur = () => {
@@ -890,78 +955,59 @@
                     mainEditorContentDiv.innerHTML = modalContentArea.innerHTML;
                 };
             }
-
             modal.style.display = 'block';
             modalContentArea.focus();
+            document.execCommand('defaultParagraphSeparator', false, 'br');
             bringToFront(modal);
         }
 
         function closeZoomModal() {
             const modal = document.getElementById('content-zoom-modal');
             const modalContentArea = document.getElementById('zoom-modal-content-area');
-            
             if (activeZoomNoteIndex !== null) {
                 updateQuickNote(activeZoomNoteIndex, 'text', modalContentArea.innerHTML, false); 
-                
                 const mainEditorContentDiv = document.getElementById(`editor-content-${activeZoomNoteIndex}`);
-                if (mainEditorContentDiv) {
-                    mainEditorContentDiv.innerHTML = modalContentArea.innerHTML;
-                }
+                if (mainEditorContentDiv) mainEditorContentDiv.innerHTML = modalContentArea.innerHTML;
             }
-
             modalContentArea.oninput = null;
             modalContentArea.onblur = null;
-            modalContentArea.removeEventListener('paste', handlePaste); // ADDED: Remove paste handler
+            modalContentArea.removeEventListener('paste', handlePaste); 
+            modalContentArea.removeEventListener('copy', handleCopy); 
             activeZoomNoteIndex = null;
             modal.style.display = 'none';
         }
 
-        // --- 6. BACKGROUND IMAGE & GLASS MORPHISM LOGIC (UPDATED) ---
-
+        // --- 7. BACKGROUND & PRESET SAVING ---
         function setBackgroundImage() {
             const url = document.getElementById('bg-url').value.trim();
-
-            if (!url) {
-                alert('Please paste a valid image URL into the field.');
-                return;
-            }
-            
-            // Set the CSS variable and apply to the body
+            if (!url) { alert('Invalid URL'); return; }
             document.documentElement.style.setProperty('--background-url', `url('${url}')`);
-            
-            // Store the URL for persistence
             localStorage.setItem('backgroundImageUrl', url);
         }
-
         function clearBackgroundImage() {
             document.documentElement.style.setProperty('--background-url', 'none');
             document.getElementById('bg-url').value = '';
-            
             localStorage.removeItem('backgroundImageUrl');
         }
-
         function loadBackgroundImage() {
             const savedUrl = localStorage.getItem('backgroundImageUrl');
-
             if (savedUrl) {
                 document.documentElement.style.setProperty('--background-url', `url('${savedUrl}')`);
                 document.getElementById('bg-url').value = savedUrl;
             }
         }
         
-        // --- 7. PRESET LOGIC ---
         function saveNotepadPreset() {
+            if (!currentUser) {
+                alert("You are logged out. Please refresh and login to save to the cloud.");
+                return;
+            }
+
             const notepads = document.querySelectorAll('.notepad');
             const presetData = [];
-
             notepads.forEach(notepad => {
-                if (notepad.id === 'quick-notes-editor') {
-                    return; 
-                }
-                
+                if (notepad.id === 'quick-notes-editor') return; 
                 const contentDiv = notepad.querySelector('.rich-text-content');
-                const contentId = contentDiv ? contentDiv.id : null;
-
                 presetData.push({
                     id: notepad.id,
                     top: notepad.style.top,
@@ -971,260 +1017,178 @@
                     title: notepad.querySelector('.notepad-title').textContent,
                     isQuickNotesPad: notepad.hasAttribute('data-quick-notes'),
                     isLocked: notepad.classList.contains('locked'),
-                    content: contentId && contentDiv ? contentDiv.innerHTML : '' 
+                    content: contentDiv ? contentDiv.innerHTML : '' 
                 });
             });
 
-            try {
-                localStorage.setItem(PRESET_STORAGE_KEY, JSON.stringify(presetData));
-                
-                const saveBtn = document.getElementById('save-preset-btn');
-                const originalText = saveBtn.innerHTML;
-                const originalBg = saveBtn.style.backgroundColor;
-                const originalColor = saveBtn.style.color;
-                
-                saveBtn.innerHTML = '✅ Layout Saved!';
-                saveBtn.style.backgroundColor = '#28a745';
-                saveBtn.style.color = '#fff';
+            const jsonString = JSON.stringify(presetData);
 
-                setTimeout(() => {
-                    saveBtn.innerHTML = originalText;
-                    saveBtn.style.backgroundColor = originalBg; 
-                    saveBtn.style.color = originalColor;
-                }, 1500);
+            // 1. Save to local storage (backup)
+            localStorage.setItem(PRESET_STORAGE_KEY, jsonString);
 
-            } catch (e) {
-                console.error('Could not save notepad preset to local storage:', e);
-                alert('Error: Could not save layout preset.');
-            }
+            // 2. Save to Google Sheets (Cloud)
+            const saveBtn = document.getElementById('save-preset-btn');
+            saveBtn.textContent = "⏳ Saving...";
+
+            // Include password in the save request for verification
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ username: currentUser, password: currentPassword, preset: jsonString })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'error') {
+                    alert("Save Failed: " + data.message);
+                    saveBtn.textContent = "❌ Error";
+                } else {
+                    saveBtn.textContent = "✅ Saved to Cloud!";
+                    setTimeout(() => { saveBtn.textContent = "💾 Save Layout (Cloud)"; }, 2000);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Error saving to cloud. Check console.");
+                saveBtn.textContent = "❌ Error";
+            });
         }
 
-        function loadNotepadPreset() {
+        function loadNotepadPresetFromCloud(jsonString) {
             try {
-                const savedPreset = localStorage.getItem(PRESET_STORAGE_KEY);
-                if (!savedPreset) return false;
-
-                const presetData = JSON.parse(savedPreset);
-                
-                // 1. Delete all current dynamic notepads
-                document.querySelectorAll('.notepad').forEach(notepad => {
-                    if (notepad.id !== 'quick-notes-editor') {
-                        notepad.remove();
-                    }
-                });
-                
+                if (!jsonString) return false;
+                const presetData = JSON.parse(jsonString);
+                // Wipe existing notes handled in loginUser, but double check here
                 let maxId = 2; 
-
-                // 2. Recreate notepads from preset
                 presetData.forEach(data => {
                     const match = data.id.match(/note(\d+)/);
-                    if (match) {
-                        maxId = Math.max(maxId, parseInt(match[1]));
-                    }
-                    
-                    const newNotepad = document.createElement('div');
-                    newNotepad.id = data.id;
-                    newNotepad.className = 'notepad';
-                    
-                    newNotepad.style.top = data.top;
-                    newNotepad.style.left = data.left;
-                    newNotepad.style.width = data.width;
-                    newNotepad.style.height = data.height;
-
-                    if (data.isLocked) {
-                        newNotepad.classList.add('locked');
-                    }
-                    if (data.isQuickNotesPad) {
-                        newNotepad.setAttribute('data-quick-notes', 'true');
-                    }
-
-                    const contentDivId = `text-${data.id}`;
-                    const headerTitle = data.title;
-                    const lockEmoji = data.isLocked ? '🔓' : '🔒'; 
-
-                    let innerHTML = `
-                        <div class="notepad-header">
-                            <span class="notepad-title" data-draggable-handle="true">${headerTitle}</span>
-                            <button class="lock-btn" onclick="toggleLock('${data.id}')">${lockEmoji}</button>
-                            <button class="close-btn" onclick="deleteNotepad('${data.id}')">X</button>
-                        </div>
-                        <div class="notepad-content">
-                            <div class="button-group" id="formatting-buttons-${data.id}">
-                                <button data-command="bold" onclick="formatText('${contentDivId}', 'bold')"><b>B</b></button>
-                                <button data-command="italic" onclick="formatText('${contentDivId}', 'italic')"><i>I</i></button>
-                                <button data-command="underline" onclick="formatText('${contentDivId}', 'underline')"><u>U</u></button>
-                                <button data-command="custom-large-text" onclick="formatText('${contentDivId}', 'custom-large-text')">Big Text</button>
-                            </div>`;
-                    
-                    if (data.isQuickNotesPad) {
-                        innerHTML += `<div class="button-group quick-notes-buttons" id="quick-notes-buttons-${data.id}"></div>`;
-                    }
-                    
-                    innerHTML += `<div id="${contentDivId}" class="rich-text-content" contenteditable="true">${data.content}</div>
-                        </div>`;
-
-                    newNotepad.innerHTML = innerHTML;
-                    document.body.appendChild(newNotepad);
+                    if (match) maxId = Math.max(maxId, parseInt(match[1]));
+                    createRestoredNotepad(data);
                 });
-
                 notepadCounter = maxId;
                 return true; 
-
             } catch (e) {
-                console.error('Error loading notepad preset:', e);
+                console.error('Error loading preset:', e);
                 return false;
             }
         }
 
+        function createRestoredNotepad(data) {
+            const newNotepad = document.createElement('div');
+            newNotepad.id = data.id;
+            newNotepad.className = 'notepad';
+            newNotepad.style.top = data.top;
+            newNotepad.style.left = data.left;
+            newNotepad.style.width = data.width;
+            newNotepad.style.height = data.height;
+            if (data.isLocked) newNotepad.classList.add('locked');
+            if (data.isQuickNotesPad) newNotepad.setAttribute('data-quick-notes', 'true');
 
-        // --- 8. DRAG-AND-DROP & LOCK LOGIC ---
+            const contentDivId = `text-${data.id}`;
+            const lockEmoji = data.isLocked ? '🔓' : '🔒'; 
+            let innerHTML = `
+                <div class="notepad-header">
+                    <span class="notepad-title" data-draggable-handle="true">${data.title}</span>
+                    <button class="lock-btn" onclick="toggleLock('${data.id}')">${lockEmoji}</button>
+                    <button class="close-btn" onclick="deleteNotepad('${data.id}')">X</button>
+                </div>
+                <div class="notepad-content">
+                    <div class="button-group" id="formatting-buttons-${data.id}">
+                        <button data-command="bold" onclick="formatText('${contentDivId}', 'bold')"><b>B</b></button>
+                        <button data-command="italic" onclick="formatText('${contentDivId}', 'italic')"><i>I</i></button>
+                        <button data-command="underline" onclick="formatText('${contentDivId}', 'underline')"><u>U</u></button>
+                        <button data-command="custom-large-text" onclick="formatText('${contentDivId}', 'custom-large-text')">Big Text</button>
+                    </div>`;
+            if (data.isQuickNotesPad) innerHTML += `<div class="button-group quick-notes-buttons" id="quick-notes-buttons-${data.id}"></div>`;
+            innerHTML += `<div id="${contentDivId}" class="rich-text-content" contenteditable="true">${data.content}</div></div>`;
+            
+            newNotepad.innerHTML = innerHTML;
+            document.body.appendChild(newNotepad);
+            makeDraggable(newNotepad);
+            makeTitleEditable(newNotepad);
+
+            const contentDiv = document.getElementById(contentDivId);
+            contentDiv.addEventListener('mouseup', () => updateButtonVisualState(contentDivId));
+            contentDiv.addEventListener('keyup', () => updateButtonVisualState(contentDivId));
+            contentDiv.addEventListener('click', () => updateButtonVisualState(contentDivId));
+            contentDiv.addEventListener('paste', handlePaste); 
+            contentDiv.addEventListener('copy', handleCopy); 
+            
+            // Apply formatting fix on load
+            contentDiv.focus();
+            document.execCommand('defaultParagraphSeparator', false, 'br');
+            contentDiv.blur();
+
+            if (data.isQuickNotesPad) populateQuickNoteButtons(data.id);
+        }
+
+        // --- 8. DRAG, DROP, RENAME & DELETE LOGIC ---
         function bringToFront(element) {
-            if (element.id !== 'content-zoom-modal') {
-                element.style.zIndex = ++zIndexCounter;
-            } else {
-                element.style.zIndex = 9999; 
-            }
+            if (element.id !== 'content-zoom-modal') element.style.zIndex = ++zIndexCounter;
+            else element.style.zIndex = 9999; 
         }
         
         function makeDraggable(element) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             const dragHandle = element.querySelector('.notepad-header');
             
-            const resizeObserver = new ResizeObserver(() => {
-                if (element.classList.contains('locked')) {
-                    return; 
-                }
-
+            new ResizeObserver(() => {
+                if (element.classList.contains('locked')) return; 
                 const currentWidth = element.offsetWidth;
                 const maxWidth = window.innerWidth - element.offsetLeft - SCROLLBAR_WIDTH; 
-
-                let newWidth = currentWidth;
-                
-                if (currentWidth > maxWidth) {
-                    newWidth = maxWidth;
-                }
-                if (newWidth < MIN_NOTEPAD_SIZE) {
-                    newWidth = MIN_NOTEPAD_SIZE;
-                }
-                
-                if (newWidth !== currentWidth) {
-                    element.style.width = newWidth + 'px';
-                }
+                if (currentWidth > maxWidth) element.style.width = maxWidth + 'px';
             }).observe(element);
             
-            function enableDrag() {
-                if (dragHandle) {
-                    dragHandle.onmousedown = dragMouseDown;
-                } else {
-                    element.onmousedown = dragMouseDown;
-                }
-                element.style.resize = 'both';
-            }
-
-            function disableDrag() {
-                if (dragHandle) {
-                    dragHandle.onmousedown = null;
-                } else {
-                    element.onmousedown = null;
-                }
-                document.onmouseup = null;
-                document.onmousemove = null;
-                element.style.resize = 'none';
-            }
-
             function dragMouseDown(e) {
                 if (element.classList.contains('locked')) return; 
-
                 e = e || window.event;
                 if (e.target.closest('button') || e.target.classList.contains('zoom-btn') || (e.target.hasAttribute('contenteditable') && e.target.getAttribute('contenteditable') === 'true')) {
-                    bringToFront(element);
-                    return;
+                    bringToFront(element); return;
                 }
                 e.preventDefault();
                 bringToFront(element);
-                pos3 = e.clientX;
-                pos4 = e.clientY;
+                pos3 = e.clientX; pos4 = e.clientY;
                 document.onmouseup = closeDragElement;
                 document.onmousemove = elementDrag;
             }
-            
             function elementDrag(e) {
                 if (element.classList.contains('locked')) return; 
-                
                 e = e || window.event;
                 e.preventDefault();
-                
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                
+                pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
+                pos3 = e.clientX; pos4 = e.clientY;
                 let newTop = element.offsetTop - pos2;
                 let newLeft = element.offsetLeft - pos1;
-
-                const minTop = CONTROL_BAR_HEIGHT;
-                const minLeft = 0;
-                const maxLeft = window.innerWidth - element.offsetWidth - SCROLLBAR_WIDTH; 
-                
-                newTop = Math.max(minTop, newTop); 
-                newLeft = Math.max(minLeft, newLeft);
-                newLeft = Math.min(maxLeft, newLeft); 
-                
+                newTop = Math.max(CONTROL_BAR_HEIGHT, newTop); 
+                newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - element.offsetWidth - SCROLLBAR_WIDTH));
                 element.style.top = newTop + "px";
                 element.style.left = newLeft + "px";
             }
+            function closeDragElement() { document.onmouseup = null; document.onmousemove = null; }
             
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
-            }
-            
-            element.addEventListener('click', function(e) {
-                if (!e.target.closest('button') && !e.target.closest('.notepad-header')) {
-                    bringToFront(element);
-                }
+            if (dragHandle) dragHandle.onmousedown = dragMouseDown;
+            element.addEventListener('click', (e) => {
+                if (!e.target.closest('button') && !e.target.closest('.notepad-header')) bringToFront(element);
             });
-
-            element.enableDrag = enableDrag;
-            element.disableDrag = disableDrag;
-
-            if (element.classList.contains('locked')) {
-                disableDrag();
-            } else {
-                 enableDrag();
-            }
+            
+            element.enableDrag = () => { dragHandle.onmousedown = dragMouseDown; element.style.resize = 'both'; };
+            element.disableDrag = () => { dragHandle.onmousedown = null; element.style.resize = 'none'; };
+            
+            if (element.classList.contains('locked')) element.disableDrag(); else element.enableDrag();
         }
 
         function toggleLock(notepadId) {
             const notepad = document.getElementById(notepadId);
-            if (!notepad) return;
-
             const lockButton = notepad.querySelector('.lock-btn');
             const isLocked = notepad.classList.toggle('locked');
-
-            if (isLocked) {
-                lockButton.textContent = '🔓'; 
-                notepad.disableDrag();
-            } else {
-                lockButton.textContent = '🔒'; 
-                notepad.enableDrag();
-            }
+            lockButton.textContent = isLocked ? '🔓' : '🔒'; 
+            isLocked ? notepad.disableDrag() : notepad.enableDrag();
         }
 
-        // --- 9. DELETION LOGIC ---
         function deleteNotepad(notepadId) {
             const notepad = document.getElementById(notepadId);
-            const titleElement = notepad.querySelector('.notepad-title');
-            const titleText = titleElement ? titleElement.textContent.trim() : "this notepad";
-            const isConfirmed = confirm(`Are you sure you want to delete "${titleText}"? All unsaved notes will be lost.`);
-            if (isConfirmed) {
-                if (notepad) {
-                    notepad.remove();
-                }
-            }
+            const title = notepad.querySelector('.notepad-title').textContent.trim();
+            if (confirm(`Delete "${title}"?`)) notepad.remove();
         }
 
-        // --- 10. DYNAMIC CREATION LOGIC ---
         function createNewNotepad(withButtons) {
             notepadCounter++;
             const noteId = 'note' + notepadCounter;
@@ -1233,18 +1197,10 @@
             const newNotepad = document.createElement('div');
             newNotepad.id = noteId;
             newNotepad.className = 'notepad';
-            
-            const initialTop = Math.random() * 100 + CONTROL_BAR_HEIGHT + 50; 
-            const initialLeft = Math.random() * 100 + 100;
-            
-            newNotepad.style.top = initialTop + 'px';
-            newNotepad.style.left = initialLeft + 'px';
-            
+            newNotepad.style.top = (Math.random() * 100 + CONTROL_BAR_HEIGHT + 50) + 'px';
+            newNotepad.style.left = (Math.random() * 100 + 100) + 'px';
             bringToFront(newNotepad);
-
-            if (withButtons) {
-                newNotepad.setAttribute('data-quick-notes', 'true');
-            }
+            if (withButtons) newNotepad.setAttribute('data-quick-notes', 'true');
 
             let innerHTML = `
                 <div class="notepad-header">
@@ -1259,13 +1215,8 @@
                         <button data-command="underline" onclick="formatText('${contentDivId}', 'underline')"><u>U</u></button>
                         <button data-command="custom-large-text" onclick="formatText('${contentDivId}', 'custom-large-text')">Big Text</button>
                     </div>`;
-            
-            if (withButtons) {
-                 innerHTML += `<div class="button-group quick-notes-buttons" id="quick-notes-buttons-${noteId}"></div>`;
-            }
-            
-            innerHTML += `<div id="${contentDivId}" class="rich-text-content" contenteditable="true">${withButtons ? 'Click a button to load a note...' : ''}</div>
-                </div>`;
+            if (withButtons) innerHTML += `<div class="button-group quick-notes-buttons" id="quick-notes-buttons-${noteId}"></div>`;
+            innerHTML += `<div id="${contentDivId}" class="rich-text-content" contenteditable="true"></div></div>`;
             
             newNotepad.innerHTML = innerHTML;
             document.body.appendChild(newNotepad);
@@ -1273,129 +1224,48 @@
             makeTitleEditable(newNotepad);
             
             const contentDiv = document.getElementById(contentDivId);
-            contentDiv.addEventListener('mouseup', (e) => updateButtonVisualState(contentDivId));
-            contentDiv.addEventListener('keyup', (e) => updateButtonVisualState(contentDivId));
-            contentDiv.addEventListener('click', (e) => updateButtonVisualState(contentDivId));
-            contentDiv.addEventListener('paste', handlePaste); // ADDED: Paste handler
+            contentDiv.focus();
+            document.execCommand('defaultParagraphSeparator', false, 'br');
+            contentDiv.blur();
             
-            if (withButtons) {
-                populateQuickNoteButtons(noteId);
-            }
+            contentDiv.addEventListener('mouseup', () => updateButtonVisualState(contentDivId));
+            contentDiv.addEventListener('keyup', () => updateButtonVisualState(contentDivId));
+            contentDiv.addEventListener('click', () => updateButtonVisualState(contentDivId));
+            contentDiv.addEventListener('paste', handlePaste); 
+            contentDiv.addEventListener('copy', handleCopy); 
+            
+            if (withButtons) populateQuickNoteButtons(noteId);
         }
 
-        // --- 11. RENAMING LOGIC ---
         function makeTitleEditable(notepadElement) {
             const titleSpan = notepadElement.querySelector('.notepad-title');
-            if (!titleSpan) return;
-
             titleSpan.addEventListener('dblclick', () => {
                 bringToFront(notepadElement);
                 titleSpan.setAttribute('contenteditable', 'true');
                 titleSpan.classList.add('editing');
                 titleSpan.focus();
-                try {
-                    const range = document.createRange();
-                    range.selectNodeContents(titleSpan);
-                    const sel = window.getSelection();
-                    sel.removeAllRanges();
-                    sel.addRange(range);
-                } catch (e) {}
             });
-
             titleSpan.addEventListener('blur', () => {
-                let newTitle = titleSpan.textContent.trim() || 'Untitled Note';
-                titleSpan.textContent = newTitle;
+                titleSpan.textContent = titleSpan.textContent.trim() || 'Untitled Note';
                 titleSpan.setAttribute('contenteditable', 'false');
                 titleSpan.classList.remove('editing');
             });
-
             titleSpan.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    titleSpan.blur();
-                }
+                if (e.key === 'Enter') { e.preventDefault(); titleSpan.blur(); }
             });
         }
 
-        // --- 12. INITIALIZATION ---
         function initialize() {
-            // Get the actual height of the control bar after CSS is loaded
             CONTROL_BAR_HEIGHT = document.getElementById('controls').offsetHeight + 2; 
-            
-            // Set CSS variable for use in background-position calculation for the mirror
             document.documentElement.style.setProperty('--control-height', `${CONTROL_BAR_HEIGHT}px`);
-
             loadQuickNotes();
             loadBackgroundImage();
             
-            const presetLoaded = loadNotepadPreset();
-            
-            // Apply functionality and final checks to ALL non-editor notepads currently in the DOM
-            document.querySelectorAll('.notepad').forEach(notepad => {
-                if (notepad.id === 'quick-notes-editor') return; 
-
-                makeDraggable(notepad); 
-                makeTitleEditable(notepad);
-                
-                const contentDiv = notepad.querySelector('.rich-text-content');
-                if (contentDiv) {
-                    const contentDivId = contentDiv.id;
-                    contentDiv.addEventListener('mouseup', () => updateButtonVisualState(contentDivId));
-                    contentDiv.addEventListener('keyup', () => updateButtonVisualState(contentDivId));
-                    contentDiv.addEventListener('click', () => updateButtonVisualState(contentDivId));
-                    contentDiv.addEventListener('paste', handlePaste); // ADDED: Paste handler for preset/initial notes
-                }
-                
-                // Ensure the notepad is below the sticky toolbar
-                let currentTop = parseInt(notepad.style.top);
-                if (currentTop < CONTROL_BAR_HEIGHT) {
-                    notepad.style.top = CONTROL_BAR_HEIGHT + 'px';
-                }
-            });
-
-            refreshAllButtons();
+            // Show login modal on start
+            document.getElementById('login-overlay').style.display = 'flex';
         }
 
         window.addEventListener('load', initialize);
     </script>
-
-<div id="note4" class="notepad locked" data-quick-notes="true" style="top: 69px; left: 1235px; width: 668px; height: 846px; resize: none;">
-                        <div class="notepad-header">
-                            <span class="notepad-title" data-draggable-handle="true">Scripts</span>
-                            <button class="lock-btn" onclick="toggleLock(&#39;note4&#39;)">🔓</button>
-                            <button class="close-btn" onclick="deleteNotepad(&#39;note4&#39;)">X</button>
-                        </div>
-                        <div class="notepad-content">
-                            <div class="button-group" id="formatting-buttons-note4">
-                                <button data-command="bold" onclick="formatText(&#39;text-note4&#39;, &#39;bold&#39;)"><b>B</b></button>
-                                <button data-command="italic" onclick="formatText(&#39;text-note4&#39;, &#39;italic&#39;)"><i>I</i></button>
-                                <button data-command="underline" onclick="formatText(&#39;text-note4&#39;, &#39;underline&#39;)"><u>U</u></button>
-                                <button data-command="custom-large-text" onclick="formatText(&#39;text-note4&#39;, &#39;custom-large-text&#39;)">Big Text</button>
-                            </div><div class="button-group quick-notes-buttons" id="quick-notes-buttons-note4"><button data-type="quick-note">Opening/Closing</button><button data-type="quick-note">PC</button><button data-type="quick-note">Laptop</button><button data-type="quick-note">Printer</button><button data-type="quick-note">Supplies</button><button data-type="quick-note">Reco. Template</button><button data-type="quick-note">[ZTP] HP Rewards</button><button data-type="quick-note">[ZTP] Printer Upsell</button><button data-type="quick-note">[ZTP] Finance</button><button data-type="quick-note">[ZTP] All-in-One</button><button data-type="quick-note">Care Pack</button><button data-type="quick-note">CX Ready to Buy</button><button data-type="quick-note">All Script</button><button data-type="quick-note">Template</button></div><div id="text-note4" class="rich-text-content" contenteditable="true"><div><b></b></div><div><b></b></div><span class="large-text"><div><b></b></div></span><div><b><span class="large-text">Opening:</span></b></div><div></div><div></div><div></div><div><br></div><div>Welcome to HP America’s favorite PC brand! It’s our Black Friday sale, and I’m Rain. I've read your concern, and I'm glad to assist!</div><div><br></div><div><br></div><div>Welcome to HP - America's favorite PC brand! It's our Clear Warehouse Sale, I'm Rain. I've read your concern, and I'm glad to assist!</div><div><br></div><div><br></div><div><br></div><div><b>Probing:&nbsp;</b></div><div><br></div><div><i>(Optional)</i> Just wondering — do you currently own a computer / printer / laptop?</div><div><br></div><div><br></div><div>Let’s make sure we find the perfect device / supplies for you—mind if I ask a few quick questions about what you need?</div><div><br></div><div><br></div><div><br></div><div><b>Closing:&nbsp;</b></div><div><br></div><div>Thank you! You can send a copy of this chat to your email by clicking the three lines on the left side of the chat window and entering your email address. We appreciate your time and thank you for choosing HP!</div></div>
-                        </div></div><div id="note5" class="notepad locked" style="top: 69px; left: 0px; width: 435px; height: 641px; resize: none;">
-                        <div class="notepad-header">
-                            <span class="notepad-title" data-draggable-handle="true">1st Chat Documentation</span>
-                            <button class="lock-btn" onclick="toggleLock(&#39;note5&#39;)">🔓</button>
-                            <button class="close-btn" onclick="deleteNotepad(&#39;note5&#39;)">X</button>
-                        </div>
-                        <div class="notepad-content">
-                            <div class="button-group" id="formatting-buttons-note5">
-                                <button data-command="bold" onclick="formatText(&#39;text-note5&#39;, &#39;bold&#39;)"><b>B</b></button>
-                                <button data-command="italic" onclick="formatText(&#39;text-note5&#39;, &#39;italic&#39;)"><i>I</i></button>
-                                <button data-command="underline" onclick="formatText(&#39;text-note5&#39;, &#39;underline&#39;)"><u>U</u></button>
-                                <button data-command="custom-large-text" onclick="formatText(&#39;text-note5&#39;, &#39;custom-large-text&#39;)">Big Text</button>
-                            </div><div id="text-note5" class="rich-text-content" contenteditable="true"><div><div>EMAIL:&nbsp;</div><div>CHATTER:&nbsp;</div><div>ISSUE:&nbsp;</div><div>INTERACTION ID:&nbsp;</div><div><br></div><div>FULLY VERIFIED: Y/N</div><div>ACTION TAKEN:&nbsp;</div><div>OUTCOME:&nbsp;</div><div><br></div><div><i>HP Rewards:&nbsp;</i></div><div><i>Financing:&nbsp;</i></div><div><i>Printer Upsell:&nbsp;</i></div><div><i>All-in-Plan:&nbsp;</i></div><div><i>Care Pack:&nbsp;</i></div><div><br></div><div><b>Additional Notes</b></div><div><br></div><div>Product Offered:&nbsp;</div><div>Order number:&nbsp;</div><div>Subtotal:&nbsp;</div><div>Concurrent chat:&nbsp;</div><div>Recommended product:&nbsp;</div><div>Phone:&nbsp;</div><div>Shipping Address:&nbsp;</div><div>Billing Address: Same?&nbsp;</div><div><br></div></div></div>
-                        </div></div><div id="note7" class="notepad locked" style="top: 457px; left: 856px; width: 377px; height: 458px; resize: none;">
-                        <div class="notepad-header">
-                            <span class="notepad-title" data-draggable-handle="true">Interaction Tracker</span>
-                            <button class="lock-btn" onclick="toggleLock(&#39;note7&#39;)">🔓</button>
-                            <button class="close-btn" onclick="deleteNotepad(&#39;note7&#39;)">X</button>
-                        </div>
-                        <div class="notepad-content">
-                            <div class="button-group" id="formatting-buttons-note7">
-                                <button data-command="bold" onclick="formatText(&#39;text-note7&#39;, &#39;bold&#39;)"><b>B</b></button>
-                                <button data-command="italic" onclick="formatText(&#39;text-note7&#39;, &#39;italic&#39;)"><i>I</i></button>
-                                <button data-command="underline" onclick="formatText(&#39;text-note7&#39;, &#39;underline&#39;)"><u>U</u></button>
-                                <button data-command="custom-large-text" onclick="formatText(&#39;text-note7&#39;, &#39;custom-large-text&#39;)">Big Text</button>
-                            </div><div id="text-note7" class="rich-text-content" contenteditable="true"><div>Int. ID:&nbsp;<div>Remarks:&nbsp;</div><div><br></div><div>Int. ID:&nbsp;<div>Remarks:&nbsp;</div><div><br></div><div>Int. ID:&nbsp;<div>Remarks:&nbsp;</div><div><br></div><div>Int. ID:&nbsp;<div>Remarks:&nbsp;</div><div><br></div><div>Int. ID:&nbsp;<div>Remarks:&nbsp;</div><div><br></div><div>Int. ID:&nbsp;<div>Remarks:&nbsp;</div><div><br></div><div>Int. ID:&nbsp;<div>Remarks:&nbsp;</div><div><br></div></div></div></div></div></div></div></div></div>
-                        </div></div></body></html>
+</body>
+</html>
