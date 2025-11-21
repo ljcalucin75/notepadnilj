@@ -1,16 +1,20 @@
 <!DOCTYPE html>
-<html lang="en" style="--control-height: 50px; --background-url: url(&#39;https://www.hdwallpapers.in/download/bob_the_minion_in_coat_suit_with_guns_4k_hd_minions-3840x2160.jpg&#39;);"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    
+<html lang="en">
+<head>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NOTEPAD NI LJ!!</title>
     
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
         :root {
             --background-url: none; 
+            --control-height: 50px; /* Placeholder, updated by JS on load */
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
             background-color: #5C5C5C;
@@ -22,1285 +26,690 @@
             transition: background-image 0.5s ease-in-out;
             min-height: 100vh; 
             overflow-x: hidden;
+            position: relative;
         }
 
-        /* --- Login Modal Styles --- */
-        #login-overlay {
+        /* --- Master Control Panel Styles: The Glassmorphism Container --- */
+        #controls {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        #controls button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            margin-left: 8px;
+            font-size: 14px;
+        }
+
+        #controls button:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .text-neon-blue {
+            color: #4A90E2;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-shadow: 0 0 5px #4A90E2, 0 0 10px #4A90E255;
+            margin-right: 15px;
+        }
+        
+        /* AUTH STATUS */
+        #auth-status {
+            font-size: 14px;
+            font-weight: 500;
+            color: #eee;
+            margin-right: 15px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            max-width: 150px;
+        }
+
+        /* --- Notepad Styles --- */
+        #quick-notes-container {
+            position: absolute;
+            top: var(--control-height);
+            width: 100%;
+            min-height: calc(100vh - var(--control-height));
+        }
+        
+        .notepad {
+            position: absolute;
+            width: 300px;
+            height: 200px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            resize: both;
+            overflow: hidden;
+            z-index: 10;
+            transition: box-shadow 0.2s ease, transform 0.1s ease;
+        }
+
+        .notepad.focus {
+            z-index: 20;
+            box-shadow: 0 15px 40px rgba(74, 144, 226, 0.5); /* Blue focus */
+            transform: scale(1.01);
+        }
+        
+        .notepad:not(.locked) {
+            border: 2px solid transparent;
+        }
+        
+        .notepad.locked {
+            resize: none;
+            border: 2px solid #e74c3c; /* Red border for locked state */
+        }
+        
+        .notepad.locked .notepad-header {
+            cursor: default;
+            background-color: #f7f7f7;
+        }
+
+        .notepad-header {
+            cursor: grab;
+            padding: 8px 12px;
+            background-color: #f1f1f1;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+        
+        .notepad-header .close-btn, .notepad-header .lock-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            font-size: 14px;
+            margin-left: 6px;
+            transition: color 0.2s;
+            outline: none;
+            color: #3498db;
+        }
+        .notepad-header .close-btn { color: #e74c3c; }
+        .notepad-header .close-btn:hover { color: #c0392b; }
+        .notepad-header .lock-btn:hover { color: #2980b9; }
+
+        .notepad-title {
+            font-weight: 600;
+            flex-grow: 1;
+            padding-right: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #333;
+        }
+        .notepad-title[contenteditable="true"] {
+            outline: 1px dashed #3498db;
+            background: #fff;
+            padding: 0 3px;
+        }
+
+        .notepad-content {
+            flex-grow: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+        }
+        
+        .rich-text-content {
+            flex-grow: 1;
+            border: 1px solid #ced4da;
+            padding: 10px;
+            min-height: 50px;
+            overflow-y: auto;
+            border-radius: 6px;
+            line-height: 1.5;
+            outline: none;
+            margin-top: 8px;
+            background-color: #ffffff;
+            font-size: 14px;
+        }
+
+        /* Styling for the rich text editor buttons */
+        .button-group {
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .button-group button {
+            background: #f8f9fa;
+            border: 1px solid #ced4da;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 4px;
+            margin-bottom: 4px;
+            font-size: 12px;
+            transition: background-color 0.2s;
+            box-shadow: none;
+        }
+
+        .button-group button:hover {
+            background: #e9ecef;
+        }
+        
+        /* Custom formatting styles */
+        .custom-large-text {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #2c3e50;
+            background-color: #f39c1233;
+            padding: 1px 3px;
+            border-radius: 3px;
+            display: inline;
+        }
+        
+        /* --- Modal Styles (Used for Login/Signup/Background) --- */
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.95);
-            z-index: 20000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-        #login-box {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 0 20px rgba(255,255,255,0.2);
-            width: 300px;
-        }
-        #login-box h2 { margin-top: 0; color: #333; }
-        
-        #login-box input {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box; 
-        }
-        
-        #login-box button {
-            width: 90%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        #login-box button:hover { background-color: #0056b3; }
-        #login-status { 
-            margin-top: 15px; 
-            color: #dc3545; 
-            font-size: 14px; 
-            font-weight: bold; 
-            min-height: 20px; 
-            line-height: 1.4;
-            text-transform: uppercase;
-        }
-
-        /* --- User Info Display in Controls --- */
-        #user-display {
-            display: flex;
-            align-items: center;
-            margin-left: auto;
-            background: rgba(0,0,0,0.5);
-            padding: 4px 12px;
-            border-radius: 20px;
-            color: white;
-            font-weight: bold;
-            font-size: 13px;
-            gap: 8px;
-        }
-        #logout-btn {
-            background-color: #dc3545 !important;
-            font-size: 11px !important;
-            padding: 4px 8px !important;
-        }
-
-        /* --- Master Control Panel (Compact) --- */
-        #controls {
-            position: sticky;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 8px 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            z-index: 9999;
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-            backdrop-filter: blur(8px); 
-            -webkit-backdrop-filter: blur(8px);
-            background-color: rgba(255, 255, 255, 0.2); 
-            overflow: hidden; 
-        }
-        
-        #toolbar-bg-mirror {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; 
-            background-image: var(--background-url);
-            background-size: cover;
-            background-repeat: repeat;
-            background-attachment: fixed;
-            filter: brightness(60%) contrast(120%); 
-            opacity: 0.8; 
-            transform: scaleY(-1);
-            background-position: center calc(var(--control-height) * -1); 
-        }
-
-        #controls button {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            background-color: rgba(0, 0, 0, 0.6); 
-            color: white;
-            font-weight: bold;
-            font-size: 13px;
-            cursor: pointer;
-            transition: background-color 0.2s, color 0.2s; 
-            white-space: nowrap;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); 
-        }
-        
-        #controls button:hover {
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-
-        #save-preset-btn {
-            background-color: rgba(0, 0, 128, 0.7); 
-        }
-        #save-preset-btn:hover {
-            background-color: rgba(0, 0, 160, 0.9);
-        }
-        
-        .image-control {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-        
-        .image-control button {
-            background-color: rgba(0, 100, 200, 0.7); 
-        }
-        .image-control button:hover {
-            background-color: rgba(0, 120, 240, 0.9);
-        }
-        .image-control input[type="url"] {
-            padding: 6px 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 180px;
-            background-color: rgba(255, 255, 255, 0.8); 
-            font-size: 13px;
-        }
-        
-        /* --- Notepad Base Styles --- */
-        .notepad {
-            position: absolute;
-            width: 300px;
-            height: 200px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border: 1px solid #ccc;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-            display: flex;
-            flex-direction: column;
-            resize: both; 
-            overflow: auto;
-            min-width: 150px;
-            min-height: 100px;
             z-index: 1000;
-        }
-        .notepad.locked .notepad-header {
-            cursor: default !important;
-        }
-        .notepad.locked {
-            resize: none !important;
-        }
-
-        .notepad-header {
-            cursor: grab;
-            background-color: #f0f0f0;
-            border-bottom: 1px solid #ccc;
-            padding: 4px 8px;
-            font-weight: bold;
-            font-size: 13px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap; 
-        }
-        .notepad-header:active {
-            cursor: grabbing;
-        }
-        .close-btn, .lock-btn {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            padding: 2px 6px;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 12px;
-            margin-left: 5px; 
-            cursor: pointer;
-            border-radius: 3px;
-            line-height: 1;
-            font-weight: bold;
-            transition: background-color 0.2s;
-            z-index: 1;
-        }
-        .lock-btn { 
-            background-color: #8b0000; 
-            margin-left: auto; 
-        }
-        .lock-btn:hover {
-            background-color: #a52a2a;
-        }
-        .close-btn:hover {
-            background-color: #d32f2f;
-        }
-        .notepad-title {
-            flex-grow: 1;
-            cursor: grab;
-            outline: none;
-            min-width: 50px;
-            margin-right: 10px;
-        }
-        .notepad-title.editing {
-            cursor: text;
-            background-color: #fff;
-            padding: 0 3px;
-            border: 1px solid #aaa;
-            border-radius: 3px;
-            box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-        }
-        .notepad-content {
-            flex-grow: 1;
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-        /* --- Formatting Buttons & Visual State --- */
-        .button-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            padding-bottom: 4px;
-        }
-        .button-group button {
-            padding: 4px 6px;
-            border: 1px solid #ddd;
-            background-color: #eee;
-            cursor: pointer;
-            font-size: 11px;
-            border-radius: 3px;
-            transition: background-color 0.1s, color 0.1s;
-        }
-        .button-group button:hover {
-            background-color: #e0e0e0;
-        }
-        
-        .quick-notes-buttons {
-            margin-bottom: 8px;
-            border: 1px solid #ccc;
-            padding: 4px;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-        
-        .button-group button.active,
-        #quick-notes-editor .formatting-row button.active,
-        #zoom-modal-toolbar button.active {
-            background-color: #007bff;
-            color: white;
-            border-color: #007bff;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
-        }
-        .quick-notes-buttons button {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border-color: #bee5eb;
-            font-weight: normal;
-        }
-        .quick-notes-buttons button:hover {
-            background-color: #bee5eb;
-        }
-        
-        .rich-text-content {
-            flex-grow: 1;
-            width: 100%;
-            min-height: 50px;
-            border: 1px solid #eee;
-            padding: 5px;
-            overflow-y: auto;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            box-sizing: border-box;
-            outline: none;
-        }
-        
-        .rich-text-content font[size="5"],
-        .editor-rich-text-content font[size="5"],
-        #zoom-modal-content-area font[size="5"],
-        .rich-text-content .large-text { 
-            font-size: 1.6em; 
-            display: inline;
-        }
-        
-        /* --- Quick Notes Editor Styles --- */
-        #quick-notes-editor {
-            width: 800px;
-            height: 500px;
-            top: 100px;
-            left: 200px;
-            overflow: hidden;
-        }
-        
-        #editor-header-buttons {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-            margin-left: auto;
-            flex-wrap: wrap; 
-        }
-        #add-note-btn, #save-notes-btn {
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            white-space: nowrap;
-            color: white; 
-            font-size: 13px;
-        }
-        #add-note-btn { background-color: #28a745; }
-        #add-note-btn:hover { background-color: #34c759; }
-        #save-notes-btn { background-color: #007bff; }
-        #save-notes-btn:hover { background-color: #4dabf5; }
-
-        #quick-notes-editor .notepad-content {
-            display: grid;
-            grid-template-columns: 150px 1fr 60px; 
-            grid-auto-rows: minmax(min-content, auto);
-            gap: 8px;
-            overflow-y: auto;
-            padding: 10px;
-            align-items: stretch; 
-        }
-        #quick-notes-editor strong {
-            padding-bottom: 5px;
-            border-bottom: 2px solid #ccc;
-            align-self: center;
-        }
-        .content-wrapper {
-            grid-column: 2 / 3;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #ddd;
-            box-sizing: border-box;
-            background-color: white;
-            position: relative;
-        }
-        #quick-notes-editor .formatting-row {
-            display: flex;
-            gap: 3px; 
-            padding: 5px; 
-            border-bottom: 1px solid #eee;
-            align-items: center;
-        }
-        #quick-notes-editor .formatting-row button {
-            padding: 3px 6px; 
-            font-size: 11px; 
-            border: 1px solid #ddd;
-            background-color: #eee;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: background-color 0.1s, color 0.1s;
-        }
-        #quick-notes-editor .formatting-row button:hover {
-            background-color: #e0e0e0;
-        }
-        .editor-rich-text-content {
-            flex-grow: 1; 
-            width: 100%;
-            min-height: 50px; 
-            max-height: 70px; 
-            border: none; 
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            padding: 5px;
-            box-sizing: border-box;
-            overflow-y: auto; 
-            outline: none;
-            padding-right: 25px; 
-        }
-        #quick-notes-editor input[type="text"] {
-            grid-column: 1 / 2; 
-            padding: 5px;
-            border: 1px solid #ddd;
-            width: 100%;
-            box-sizing: border-box;
-            align-self: stretch; 
-        }
-        #quick-notes-editor .icon-container {
-            grid-column: 3 / 4; 
-            display: flex;
+            display: none;
             justify-content: center;
-            align-items: center; 
-            align-self: stretch; 
-            border: 1px solid #ddd; 
-            box-sizing: border-box;
-            background-color: white;
-        }
-        #quick-notes-editor button.delete-note-btn {
-            font-size: 1.2em;
-            cursor: pointer;
-            border: none;
-            background: none;
-            padding: 0;
-            line-height: 1;
-            color: #dc3545;
-            margin: 0; 
-        }
-        .zoom-btn {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            background: none;
-            border: none;
-            font-size: 1em;
-            cursor: pointer;
-            color: #6c757d;
-            padding: 0;
-            line-height: 1;
-            z-index: 10;
-        }
-        .zoom-btn:hover { color: #007bff; }
-
-        /* --- Zoom Modal Style --- */
-        #content-zoom-modal {
-            display: none; 
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.5); 
-            z-index: 9990; 
-            padding: 5vh 5vw;
-            box-sizing: border-box;
-        }
-        #zoom-modal-content {
-            background-color: white;
-            width: 100%;
-            height: 100%;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        #zoom-modal-header {
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            font-weight: bold;
+            animation: fadeIn 0.3s;
         }
-        #zoom-modal-content-area {
-            flex-grow: 1;
-            padding: 10px;
-            overflow-y: auto;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            outline: none;
+        
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            width: 90%;
+            max-width: 400px;
+            animation: slideIn 0.3s;
+        }
+        
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
             box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
-        #zoom-modal-toolbar {
-            display: flex;
-            gap: 5px;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
+        .modal-input:focus {
+            border-color: #4A90E2;
+            box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+            outline: none;
         }
-        #zoom-modal-toolbar button {
-            padding: 5px 8px;
-            border: 1px solid #ddd;
-            background-color: #eee;
+        
+        .modal-button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 12px;
-            border-radius: 3px;
-            transition: background-color 0.1s, color 0.1s;
+            transition: background-color 0.3s, transform 0.1s;
         }
-        #zoom-modal-toolbar button:hover { background-color: #e0e0e0; }
+
+        #login-btn-modal { background-color: #4A90E2; color: white; margin-bottom: 10px; }
+        #login-btn-modal:hover { background-color: #357ABD; }
+        #signup-btn-modal { background-color: #2ecc71; color: white; }
+        #signup-btn-modal:hover { background-color: #27ae60; }
+        #apply-bg-btn { background-color: #9b59b6; color: white; }
+        #apply-bg-btn:hover { background-color: #8e44ad; }
+        #login-error-message { color: #e74c3c; font-size: 14px; text-align: center; margin-bottom: 15px; display: none;}
+        
+        /* Chat Box Styles */
+        #chat-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 380px;
+            display: none;
+            z-index: 100;
+        }
+        
+        #chat-box .notepad-header {
+            background-color: #3498db;
+            color: white;
+            cursor: default;
+        }
+        #chat-box .notepad-title {
+            color: white;
+        }
+        #chat-box .close-btn {
+            color: white;
+            opacity: 0.8;
+        }
+        #chat-box .close-btn:hover {
+            opacity: 1;
+        }
+        
+        #chat-messages-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #f8f9fa;
+        }
+
+        .chat-message {
+            margin-bottom: 8px;
+            max-width: 80%;
+        }
+        .chat-timestamp {
+            font-size: 10px; 
+            color: #6c757d; 
+            display: block; 
+            margin-bottom: 2px;
+        }
+        .chat-bubble {
+            display: inline-block; 
+            padding: 8px 12px; 
+            border-radius: 18px; 
+            word-wrap: break-word;
+            font-size: 14px;
+        }
+        .chat-me {
+            text-align: right;
+            margin-left: auto;
+        }
+        .chat-me .chat-bubble {
+            background-color: #4A90E2; 
+            color: white;
+        }
+        .chat-other {
+            text-align: left;
+        }
+        .chat-other .chat-bubble {
+            background-color: #e9ecef; 
+            color: #212529;
+        }
+        
+        #chat-input-area {
+            border-top: 1px solid #ccc; 
+            padding: 10px; 
+            display: flex; 
+            background-color: #fff;
+        }
+        
+        #chat-input {
+            flex-grow: 1; 
+            padding: 8px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        #chat-send-btn {
+            background-color: #4A90E2; 
+            color: white; 
+            margin-left: 8px; 
+            padding: 8px 15px; 
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #chat-send-btn:hover {
+            background-color: #357ABD;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            #controls {
+                flex-direction: column;
+                height: auto;
+                padding: 10px;
+            }
+            #control-buttons {
+                margin-top: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            #controls button {
+                margin: 5px;
+            }
+            #chat-box {
+                width: 90%;
+                height: 300px;
+                bottom: 10px;
+                right: 5%;
+                left: 5%;
+            }
+        }
     </style>
 </head>
 <body>
-    <div id="login-overlay">
-        <div id="login-box">
-            <h2>Notepad Login</h2>
-            <p>Enter credentials to load your workspace.</p>
-            
-            <input type="text" id="username-input" placeholder="Username" onkeydown="if(event.key==='Enter') loginUser()">
-            <input type="password" id="password-input" placeholder="Password" onkeydown="if(event.key==='Enter') loginUser()">
-            
-            <button onclick="loginUser()">Login</button>
-            <div id="login-status"></div>
-        </div>
-    </div>
 
+    <!-- Master Control Panel -->
     <div id="controls">
-        <div id="toolbar-bg-mirror"></div> 
-        <button id="create-empty-btn" onclick="createNewNotepad(false)">➕ Create Empty</button>
-        <button id="create-quick-btn" onclick="createNewNotepad(true)">📝 Create w/ Quick Notes</button>
-
-        <button id="edit-quick-notes-btn" onclick="toggleQuickNotesEditor()">✏️ Edit Quick Notes</button>
+        <div class="text-neon-blue">NOTEPAD NI LJ!!</div>
         
-        <button id="save-preset-btn" onclick="saveNotepadPreset()" style="">💾 Save Preset (Cloud)</button>
-
-        <div class="image-control">
-            <input type="url" id="bg-url" placeholder="Paste image URL" size="20">
-            <button id="set-bg-btn" onclick="setBackgroundImage()">🖼️ Set</button>
-            <button id="clear-bg-btn" onclick="clearBackgroundImage()">❌</button>
+        <div id="auth-status">
+            <span id="welcome-message">Not Logged In</span>
         </div>
 
-        <div id="user-display" style="display:none;">
-            <span id="current-user-name">Guest</span>
-            <button id="logout-btn" onclick="logoutUser()">Logout</button>
+        <div id="control-buttons">
+            <button id="add-notepad-btn" onclick="addNewNotepad()" style="background-color: #1abc9c; color: white;">➕ New Note</button>
+            <button id="bg-btn" onclick="openBackgroundModal()" style="background-color: #9b59b6; color: white;">🖼️ Background</button>
+            <button id="save-cloud-btn" onclick="saveQuickNotes(true)" style="background-color: #f39c12; color: white;">💾 Save Cloud</button>
+            <button id="chat-btn" onclick="toggleChatBox()" style="background-color: #3498db; color: white;">💬 Chat</button>
+            <button id="logout-btn" onclick="logoutUser()" style="background-color: #e74c3c; color: white; display:none;">🔒 Logout</button>
         </div>
     </div>
     
-    <div id="quick-notes-editor" class="notepad" style="display: none;">
-        <div class="notepad-header">
-            <span class="notepad-title" data-draggable-handle="true">Quick Notes Editor</span>
-            
-            <div id="editor-header-buttons">
-                <button id="save-notes-btn" onclick="saveQuickNotes()">💾 Save Changes</button>
-                <button id="add-note-btn" onclick="addNewQuickNote()">➕ Add New Note</button>
-                <button class="close-btn" onclick="toggleQuickNotesEditor()">X</button>
+    <!-- Notepads Container (Quick Notes and other dynamic pads) -->
+    <div id="quick-notes-container">
+        <!-- Quick Notes Notepad (Always present) -->
+        <div id="quick-notes-editor" class="notepad focus" style="top: 10px; left: 10px; width: 350px; height: 180px; z-index: 20;" data-notepad-id="quick-notes">
+            <div class="notepad-header" data-draggable-handle="true">
+                <span class="notepad-title" contenteditable="false">Quick Notes</span>
+                <button class="lock-btn" onclick="toggleLock('quick-notes-editor')">🔓</button>
+            </div>
+            <div class="notepad-content">
+                <div class="button-group" id="formatting-buttons-quick-notes">
+                    <!-- Buttons are populated dynamically, but keeping this for structure -->
+                </div>
+                <div id="text-quick-notes" class="rich-text-content" contenteditable="true">Start your quick notes here.</div>
             </div>
         </div>
-        <div class="notepad-content">
-            </div>
+        <!-- Other dynamic notepads will be inserted here -->
+    </div>
+    
+    <!-- --- MODALS --- -->
+
+    <!-- Login/Signup Modal (Overlay) -->
+    <div id="login-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">User Authentication</div>
+            <div id="login-error-message"></div>
+            <input type="text" id="auth-username" placeholder="Username" class="modal-input">
+            <input type="password" id="auth-password" placeholder="Password" class="modal-input">
+            <button id="login-btn-modal" class="modal-button" onclick="loginUser()">Login & Load</button>
+            <button id="signup-btn-modal" class="modal-button" onclick="signupUser()">Signup (First Time)</button>
+        </div>
     </div>
 
-    <div id="content-zoom-modal">
-        <div id="zoom-modal-content">
-            <div id="zoom-modal-header">
-                <span id="zoom-modal-title">Note Content Editor (Zoom View)</span>
-                <button class="close-btn" onclick="closeZoomModal()">X</button>
-            </div>
-            <div class="formatting-row" id="zoom-modal-toolbar">
-                <button data-command="bold" onclick="formatText('zoom-modal-content-area', 'bold')"><b>B</b></button>
-                <button data-command="italic" onclick="formatText('zoom-modal-content-area', 'italic')"><i>I</i></button>
-                <button data-command="underline" onclick="formatText('zoom-modal-content-area', 'underline')"><u>U</u></button>
-                <button data-command="custom-large-text" onclick="formatText('zoom-modal-content-area', 'custom-large-text')">Big Text</button>
-            </div>
-            <div id="zoom-modal-content-area" contenteditable="true"></div>
+    <!-- Background Changer Modal -->
+    <div id="background-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">Change Background</div>
+            <p style="margin-bottom: 15px; font-size: 14px; text-align: center;">Enter a direct image URL:</p>
+            <input type="url" id="bg-url-input" placeholder="https://example.com/image.jpg" class="modal-input">
+            <button id="apply-bg-btn" class="modal-button" onclick="applyBackground()">Apply Background</button>
         </div>
     </div>
+
+    <!-- Chat Box (Fixed position in the corner) -->
+    <div id="chat-box" class="notepad locked" data-notepad-id="chat-box">
+        <div class="notepad-header" data-draggable-handle="true">
+            <span class="notepad-title">User Chat</span>
+            <button id="chat-status-icon" style="background-color: #f39c12; padding: 2px 5px; font-weight: bold; border-radius: 3px; font-size: 11px; color: white;">🟡 Connecting</button>
+            <button class="close-btn" onclick="toggleChatBox()">X</button>
+        </div>
+        <div class="notepad-content" style="padding: 0; display: flex; flex-direction: column;">
+            <div id="chat-messages-container">
+                <!-- Messages go here -->
+            </div>
+            <div id="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+                <button id="chat-send-btn" onclick="sendChatMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
 
     <script>
-        // --- 1. GLOBAL VARIABLES & INITIAL SETUP ---
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvdYP2SVZ_OWKeFGeaFOiRN_fOk68JVSQq0aPQNgospQszkwl2jCBlwiDT2Fr-kbXo0g/exec"; 
-
-        let zIndexCounter = 1000;
-        let notepadCounter = 2;
-        let activeZoomNoteIndex = null;
-        const NOTES_STORAGE_KEY = 'quickNotesList';
-        const PRESET_STORAGE_KEY = 'notepadLayoutPreset';
-        let CONTROL_BAR_HEIGHT = 80; 
-        const MIN_NOTEPAD_SIZE = 100;
-        const SCROLLBAR_WIDTH = 17;
+        // --- Configuration ---
+        // !!! IMPORTANT: REPLACE THIS PLACEHOLDER WITH YOUR ACTUAL DEPLOYED GOOGLE APPS SCRIPT URL !!!
+        const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_SCRIPT_URL_HERE"; 
         
-        let internalClipboardHTML = null;
-        let currentUser = null; 
-        let currentPassword = null; 
-
-        const DEFAULT_QUICK_NOTES = [
-            { label: "Opening:", text: "<font size='5'>Welcome to HP America’s favorite PC brand!</font> It’s our Black Friday sale, and I’m <b>Rain</b>. I've read your concern, and I'm glad to assist!" },
-            { label: "Probing:", text: "(Optional) Just wondering — do you currently own a computer / printer / laptop?<br>Let’s make sure we find the perfect device / supplies for you—mind if I ask a few quick questions about what you need? This is a really long script to test the maximum height restriction." },
-            { label: "Closing:", text: "Thank attention for choosing HP!" },
-            { label: "Sale 2:", text: "Welcome to HP - America's favorite PC brand! It's our Clear Warehouse Sale, I'm <b>Rain</b>. I've read your concern, and I'm glad to assist!" },
-            { label: "Ref Link", text: "Link to internal knowledge base: <a href='https://internal.hp.com/kb/...' target='_blank'>https://internal.hp.com/kb/...</a>" }
-        ];
-
-        let quickNotes = JSON.parse(JSON.stringify(DEFAULT_QUICK_NOTES));
-
-        // --- 2. LOGIN / LOGOUT LOGIC ---
+        const PRESET_STORAGE_KEY = 'notepadPreset';
+        const BG_STORAGE_KEY = 'backgroundUrl';
         
-        async function loginUser() {
-            const usernameInput = document.getElementById('username-input');
-            const passwordInput = document.getElementById('password-input');
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value.trim();
-            const statusDiv = document.getElementById('login-status');
-            
-            if (!username || !password) {
-                statusDiv.textContent = "Please enter username AND password.";
-                return;
+        let currentUser = null; // Stores the logged-in username
+        let userPassword = null; // Stores the password/token for cloud saves (CRITICAL for server POST verification)
+        let maxNotepadId = 0;
+        let CONTROL_BAR_HEIGHT = 50; 
+        
+        // --- Data Chunking Configuration (CRITICAL FIX) ---
+        // This MUST match the MAX_DATA_COLUMNS in the Google Apps Script (Code.gs)
+        const MAX_CHUNKS = 4;
+        // Keep chunk size safely below 50,000 limit
+        const CHUNK_SIZE = 49000; 
+        
+        // --- Utility Functions ---
+        
+        /**
+         * Splits a string into chunks of a specified size.
+         * @param {string} str The string to chunk.
+         * @param {number} size The maximum size of each chunk.
+         * @returns {string[]} An array of string chunks.
+         */
+        function chunkString(str, size) {
+            const chunks = [];
+            for (let i = 0; i < str.length; i += size) {
+                chunks.push(str.substring(i, i + size));
             }
-
-            statusDiv.textContent = "Connecting...";
-            
-            try {
-                const response = await fetch(`${GOOGLE_SCRIPT_URL}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
-                const result = await response.json();
-
-                // 1. SUCCESS: Only 'found' grants access
-                if (result.status === 'found') {
-                    document.getElementById('login-overlay').style.display = 'none';
-                    
-                    currentUser = username;
-                    currentPassword = password;
-                    document.getElementById('user-display').style.display = 'flex';
-                    document.getElementById('current-user-name').textContent = `User: ${currentUser}`;
-
-                    resetToDefaults();
-
-                    if (result.data) {
-                         const success = loadNotepadPresetFromCloud(result.data);
-                         if (!success) createNewNotepad(false); 
-                    } else {
-                        createNewNotepad(false);
-                    }
-
-                // 2. ERROR: Wrong Password
-                } else if (result.status === 'wrong_password') {
-                    statusDiv.textContent = "❌ WRONG PASSWORD.";
-                    
-                // 3. ERROR: No Account
-                } else if (result.status === 'user_not_found') {
-                    statusDiv.textContent = "WALA KA PANG ACCOUNT, SABIHIN MO KAY LJ CALUCIN!";
-                    
-                // 4. GENERIC ERROR: Any other status from the script
-                } else {
-                    statusDiv.textContent = "ERROR: Could not connect to data. Try again.";
-                }
-
-            } catch (e) {
-                console.error(e);
-                statusDiv.textContent = "Error connecting to database. Check network or script URL.";
-            }
+            return chunks;
+        }
+        
+        function bringToFront(element) {
+            const zIndices = Array.from(document.querySelectorAll('.notepad')).map(n => parseInt(n.style.zIndex) || 10);
+            const maxZIndex = zIndices.length > 0 ? Math.max(...zIndices) : 10;
+            element.style.zIndex = maxZIndex + 1;
         }
 
-        function logoutUser() {
-            currentUser = null;
-            currentPassword = null;
-            document.getElementById('user-display').style.display = 'none';
-            document.getElementById('login-overlay').style.display = 'flex';
-            document.getElementById('username-input').value = '';
-            document.getElementById('password-input').value = '';
-            document.getElementById('login-status').textContent = '';
+        // Draggable and Focus Logic
+        document.addEventListener('mousedown', function(e) {
+            const target = e.target.closest('.notepad');
+            // Remove focus from all
+            document.querySelectorAll('.notepad').forEach(n => n.classList.remove('focus'));
             
-            resetToDefaults(); 
-        }
+            if (target) {
+                bringToFront(target);
+                target.classList.add('focus');
+            }
+        });
+        
+        // --- 1. NOTEPAD MANAGEMENT ---
+        
+        function populateQuickNoteButtons(notepadId) {
+            const buttonGroup = document.getElementById(`formatting-buttons-${notepadId}`);
+            if (!buttonGroup) return;
 
-        function resetToDefaults() {
+            const buttons = [
+                { text: '<b>B</b>', command: 'bold' },
+                { text: '<i>I</i>', command: 'italic' },
+                { text: '<u>U</u>', command: 'underline' },
+                { text: 'Big Text', command: 'custom-large-text' },
+                { text: 'UL', command: 'insertUnorderedList' },
+                { text: 'OL', command: 'insertOrderedList' },
+            ];
+
+            buttonGroup.innerHTML = '';
+            buttons.forEach(btn => {
+                const button = document.createElement('button');
+                button.innerHTML = btn.text;
+                button.dataset.command = btn.command;
+                button.onclick = () => formatText(`text-${notepadId}`, btn.command);
+                buttonGroup.appendChild(button);
+            });
+        }
+        
+        function addNewNotepad() {
+            // Find the highest existing ID number
             document.querySelectorAll('.notepad').forEach(notepad => {
-                if (notepad.id !== 'quick-notes-editor') notepad.remove();
-            });
-            clearBackgroundImage();
-            quickNotes = JSON.parse(JSON.stringify(DEFAULT_QUICK_NOTES));
-            localStorage.removeItem(NOTES_STORAGE_KEY);
-            localStorage.removeItem('backgroundImageUrl');
-            localStorage.removeItem(PRESET_STORAGE_KEY);
-        }
-
-        // --- 3. UNIVERSAL FORMATTING LOGIC ---
-
-        function handleCopy() {
-            const selection = window.getSelection();
-            if (selection.rangeCount > 0) {
-                const range = selection.getRangeAt(0);
-                const fragment = range.cloneContents();
-                const div = document.createElement('div');
-                div.appendChild(fragment);
-                internalClipboardHTML = div.innerHTML;
-            } else {
-                internalClipboardHTML = null;
-            }
-        }
-
-        function handlePaste(e) {
-            e.preventDefault();
-            if (internalClipboardHTML) {
-                document.execCommand('insertHTML', false, internalClipboardHTML);
-                internalClipboardHTML = null; 
-                return; 
-            }
-            const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-            document.execCommand('insertText', false, text);
-        }
-
-        function updateButtonVisualState(contentDivId) {
-            const contentDiv = document.getElementById(contentDivId);
-            if (!contentDiv) return;
-
-            let buttonContainer = null;
-            if (contentDivId.startsWith('editor-content-')) {
-                 buttonContainer = contentDiv.closest('.content-wrapper').querySelector('.formatting-row');
-            } else if (contentDivId === 'zoom-modal-content-area') {
-                 buttonContainer = document.getElementById('zoom-modal-toolbar');
-            } else {
-                const notepad = contentDiv.closest('.notepad');
-                buttonContainer = notepad ? notepad.querySelector(`#formatting-buttons-${notepad.id}`) : null;
-            }
-
-            if (!buttonContainer || !buttonContainer.querySelector('button')) return;
-
-            contentDiv.focus();
-            const buttons = buttonContainer.querySelectorAll('button');
-
-            buttons.forEach(button => {
-                const btnCommand = button.getAttribute('data-command');
-                if (btnCommand === 'bold' || btnCommand === 'italic' || btnCommand === 'underline') {
-                    const isActive = document.queryCommandState(btnCommand);
-                    button.classList.toggle('active', isActive);
-                }
-                else if (btnCommand === 'custom-large-text') {
-                    const commandValue = document.queryCommandValue('fontSize');
-                    const isBig = commandValue === '5'; 
-                    button.classList.toggle('active', isBig);
+                const idMatch = notepad.id.match(/note(\d+)/);
+                if (idMatch && parseInt(idMatch[1]) > maxNotepadId) {
+                    maxNotepadId = parseInt(idMatch[1]);
                 }
             });
-        }
+            maxNotepadId++;
 
-        function formatText(contentDivId, command, value = null) {
-            const contentDiv = document.getElementById(contentDivId);
-            if (!contentDiv) return;
-            const parentElement = contentDiv.closest('.notepad') || contentDiv.closest('#content-zoom-modal');
-            if (parentElement) bringToFront(parentElement);
-            contentDiv.focus();
+            const newId = `note${maxNotepadId}`;
+            const container = document.getElementById('quick-notes-container');
 
-            setTimeout(() => {
-                if (command === 'bold' || command === 'italic' || command === 'underline') {
-                    document.execCommand(command, false, value);
-                }
-                else if (command === 'custom-large-text') {
-                    const isBig = document.queryCommandValue('fontSize') === '5';
-                    if (isBig) {
-                        document.execCommand('fontSize', false, '2'); 
-                    } else {
-                        document.execCommand('fontSize', false, '5'); 
-                    }
-                }
-                updateButtonVisualState(contentDivId);
-                contentDiv.focus();
-                
-                if (contentDivId.startsWith('editor-content-')) {
-                    const index = parseInt(contentDivId.replace('editor-content-', ''));
-                    updateQuickNote(index, 'text', contentDiv.innerHTML, false); 
-                }
-                if (contentDivId === 'zoom-modal-content-area' && activeZoomNoteIndex !== null) {
-                    updateQuickNote(activeZoomNoteIndex, 'text', contentDiv.innerHTML, false); 
-                }
-            }, 0);
-        }
-
-        // --- 4. QUICK NOTE BUTTONS LOGIC ---
-        function fillNotepad(contentDivId, noteHtml) {
-            document.getElementById(contentDivId).innerHTML = noteHtml;
-            const contentDiv = document.getElementById(contentDivId);
-            contentDiv.focus();
-            document.execCommand('defaultParagraphSeparator', false, 'br');
-            const range = document.createRange();
-            const sel = window.getSelection();
-            range.selectNodeContents(contentDiv);
-            range.collapse(false);
-            sel.removeAllRanges();
-            sel.addRange(range);
-            contentDiv.focus();
-            updateButtonVisualState(contentDivId);
-        }
-
-        function populateQuickNoteButtons(noteId) {
-            const buttonContainer = document.getElementById(`quick-notes-buttons-${noteId}`);
-            const contentDivId = `text-${noteId}`;
-            if (buttonContainer) {
-                while (buttonContainer.firstChild) {
-                    buttonContainer.removeChild(buttonContainer.firstChild);
-                }
-                quickNotes.forEach(note => {
-                    const button = document.createElement('button');
-                    button.textContent = note.label;
-                    button.onclick = () => fillNotepad(contentDivId, note.text);
-                    button.setAttribute('data-type', 'quick-note'); 
-                    buttonContainer.appendChild(button);
-                });
-            }
-        }
-
-        function refreshAllButtons() {
-            document.querySelectorAll('.notepad').forEach(notepad => {
-                if (notepad.getAttribute('data-quick-notes') === 'true') {
-                    const noteId = notepad.id;
-                    populateQuickNoteButtons(noteId);
-                }
-            });
-        }
-
-        // --- 5. EDITOR & PERSISTENCE ---
-        function saveQuickNotes() {
-            const editorContentRows = document.querySelectorAll('#quick-notes-editor .notepad-content > input[type="text"]');
-            editorContentRows.forEach((labelInput, index) => {
-                const contentDiv = document.getElementById(`editor-content-${index}`);
-                if (quickNotes[index] && contentDiv) {
-                    quickNotes[index].label = labelInput.value;
-                    quickNotes[index].text = contentDiv.innerHTML;
-                }
-            });
-            localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(quickNotes));
-            refreshAllButtons(); 
-            const saveBtn = document.getElementById('save-notes-btn');
-            const originalText = saveBtn.innerHTML;
-            saveBtn.innerHTML = '✅ Applied (Local)';
-            setTimeout(() => { saveBtn.innerHTML = originalText; }, 1000);
-        }
-
-        function loadQuickNotes() {
-            try {
-                const savedNotes = localStorage.getItem(NOTES_STORAGE_KEY);
-                if (savedNotes) quickNotes = JSON.parse(savedNotes);
-            } catch (e) {}
-        }
-
-        function updateQuickNote(index, field, value, shouldSave = true) {
-            if (quickNotes[index]) {
-                quickNotes[index][field] = value;
-                if (shouldSave) saveQuickNotes(); 
-            }
-        }
-
-        function addNewQuickNote() {
-            quickNotes.push({ label: `New Note ${quickNotes.length + 1}`, text: "Paste script..." });
-            populateQuickNotesEditor();
-            saveQuickNotes();
-            const editorContent = document.querySelector('#quick-notes-editor .notepad-content');
-            editorContent.scrollTop = editorContent.scrollHeight;
-        }
-
-        function deleteQuickNote(index) {
-            if (confirm(`Delete Quick Note?`)) {
-                quickNotes.splice(index, 1);
-                populateQuickNotesEditor();
-                saveQuickNotes();
-            }
-        }
-
-        function populateQuickNotesEditor() {
-            const editorContent = document.querySelector('#quick-notes-editor .notepad-content');
-            editorContent.innerHTML = '<strong>Button Label</strong><strong style="grid-column: 2 / 4;">Note Content & Actions</strong>';
-            
-            quickNotes.forEach((note, index) => {
-                const editorDivId = `editor-content-${index}`;
-                const labelInput = document.createElement('input');
-                labelInput.type = 'text';
-                labelInput.value = note.label;
-                labelInput.addEventListener('blur', (e) => updateQuickNote(index, 'label', e.target.value, false));
-                labelInput.style.alignSelf = 'stretch'; 
-                labelInput.style.gridColumn = '1 / 2';
-                editorContent.appendChild(labelInput);      
-
-                const contentWrapper = document.createElement('div');
-                contentWrapper.classList.add('content-wrapper');
-                
-                const formatToolbar = document.createElement('div');
-                formatToolbar.classList.add('formatting-row');
-                formatToolbar.innerHTML = `
-                    <button data-command="bold" onclick="formatText('${editorDivId}', 'bold')"><b>B</b></button>
-                    <button data-command="italic" onclick="formatText('${editorDivId}', 'italic')"><i>I</i></button>
-                    <button data-command="underline" onclick="formatText('${editorDivId}', 'underline')"><u>U</u></button>
-                    <button data-command="custom-large-text" onclick="formatText('${editorDivId}', 'custom-large-text')">Big Text</button>
-                `;
-                contentWrapper.appendChild(formatToolbar);    
-
-                const contentDiv = document.createElement('div');
-                contentDiv.id = editorDivId;
-                contentDiv.classList.add('editor-rich-text-content');
-                contentDiv.setAttribute('contenteditable', 'true');
-                contentDiv.innerHTML = note.text;
-                contentDiv.addEventListener('input', (e) => updateQuickNote(index, 'text', e.target.innerHTML, false));
-                contentDiv.addEventListener('blur', (e) => updateQuickNote(index, 'text', e.target.innerHTML, false));
-                contentDiv.addEventListener('mouseup', () => updateButtonVisualState(editorDivId));
-                contentDiv.addEventListener('keyup', () => updateButtonVisualState(editorDivId));
-                contentDiv.addEventListener('click', () => updateButtonVisualState(editorDivId));
-                contentDiv.addEventListener('paste', handlePaste); 
-                contentDiv.addEventListener('copy', handleCopy); 
-                contentWrapper.appendChild(contentDiv);      
-
-                const zoomButton = document.createElement('button');
-                zoomButton.classList.add('zoom-btn');
-                zoomButton.innerHTML = '🔍';
-                zoomButton.onclick = () => openZoomModal(index);
-                contentWrapper.appendChild(zoomButton);
-
-                editorContent.appendChild(contentWrapper);
-                
-                const actionContainer = document.createElement('div');
-                actionContainer.classList.add('icon-container');
-                actionContainer.style.gridColumn = '3 / 4'; 
-                
-                const deleteButton = document.createElement('button');
-                deleteButton.classList.add('delete-note-btn');
-                deleteButton.textContent = '🗑️';
-                deleteButton.onclick = () => deleteQuickNote(index);
-                actionContainer.appendChild(deleteButton);
-                editorContent.appendChild(actionContainer);  
-                
-                setTimeout(() => {
-                    contentDiv.focus();
-                    document.execCommand('defaultParagraphSeparator', false, 'br');
-                    contentDiv.blur();
-                }, 10);
-            });
-        }
-
-        function toggleQuickNotesEditor() {
-            const editor = document.getElementById('quick-notes-editor');
-            if (editor.style.display === 'grid') {
-                editor.style.display = 'none';
-            } else {
-                const editorWidth = 800; 
-                let newLeft = Math.max(0, (window.innerWidth / 2) - (editorWidth / 2)); 
-                let newTop = CONTROL_BAR_HEIGHT + 50; 
-                editor.style.width = editorWidth + 'px';
-                editor.style.height = 500 + 'px';
-                editor.style.left = newLeft + 'px';
-                editor.style.top = newTop + 'px';
-                populateQuickNotesEditor();
-                editor.style.display = 'grid';
-                bringToFront(editor);
-            }
-        }
-
-        // --- 6. ZOOM MODAL LOGIC ---
-        function openZoomModal(index) {
-            activeZoomNoteIndex = index;
-            const note = quickNotes[index];
-            const modal = document.getElementById('content-zoom-modal');
-            const modalContentArea = document.getElementById('zoom-modal-content-area');
-            document.getElementById('zoom-modal-title').textContent = `Editing: "${note.label}"`;
-            modalContentArea.innerHTML = note.text;
-            modalContentArea.oninput = () => updateQuickNote(index, 'text', modalContentArea.innerHTML, false);
-            modalContentArea.onmouseup = () => updateButtonVisualState('zoom-modal-content-area');
-            modalContentArea.onkeyup = () => updateButtonVisualState('zoom-modal-content-area');
-            modalContentArea.onclick = () => updateButtonVisualState('zoom-modal-content-area');
-            modalContentArea.addEventListener('paste', handlePaste); 
-            modalContentArea.addEventListener('copy', handleCopy);
-            
-            const mainEditorContentDiv = document.getElementById(`editor-content-${index}`);
-            if (mainEditorContentDiv) {
-                 modalContentArea.onblur = () => {
-                    updateQuickNote(index, 'text', modalContentArea.innerHTML, false); 
-                    mainEditorContentDiv.innerHTML = modalContentArea.innerHTML;
-                };
-            }
-            modal.style.display = 'block';
-            modalContentArea.focus();
-            document.execCommand('defaultParagraphSeparator', false, 'br');
-            bringToFront(modal);
-        }
-
-        function closeZoomModal() {
-            const modal = document.getElementById('content-zoom-modal');
-            const modalContentArea = document.getElementById('zoom-modal-content-area');
-            if (activeZoomNoteIndex !== null) {
-                updateQuickNote(activeZoomNoteIndex, 'text', modalContentArea.innerHTML, false); 
-                const mainEditorContentDiv = document.getElementById(`editor-content-${activeZoomNoteIndex}`);
-                if (mainEditorContentDiv) mainEditorContentDiv.innerHTML = modalContentArea.innerHTML;
-            }
-            modalContentArea.oninput = null;
-            modalContentArea.onblur = null;
-            modalContentArea.removeEventListener('paste', handlePaste); 
-            modalContentArea.removeEventListener('copy', handleCopy); 
-            activeZoomNoteIndex = null;
-            modal.style.display = 'none';
-        }
-
-        // --- 7. BACKGROUND & PRESET SAVING ---
-        function setBackgroundImage() {
-            const url = document.getElementById('bg-url').value.trim();
-            if (!url) { alert('Invalid URL'); return; }
-            document.documentElement.style.setProperty('--background-url', `url('${url}')`);
-            localStorage.setItem('backgroundImageUrl', url);
-        }
-        function clearBackgroundImage() {
-            document.documentElement.style.setProperty('--background-url', 'none');
-            document.getElementById('bg-url').value = '';
-            localStorage.removeItem('backgroundImageUrl');
-        }
-        function loadBackgroundImage() {
-            const savedUrl = localStorage.getItem('backgroundImageUrl');
-            if (savedUrl) {
-                document.documentElement.style.setProperty('--background-url', `url('${savedUrl}')`);
-                document.getElementById('bg-url').value = savedUrl;
-            }
-        }
-        
-        // *** UPDATED SAVE: PACKAGES EVERYTHING ***
-        function saveNotepadPreset() {
-            if (!currentUser) {
-                alert("You are logged out. Please refresh and login to save to the cloud.");
-                return;
-            }
-
-            const notepads = document.querySelectorAll('.notepad');
-            const layoutData = [];
-            notepads.forEach(notepad => {
-                if (notepad.id === 'quick-notes-editor') return; 
-                const contentDiv = notepad.querySelector('.rich-text-content');
-                layoutData.push({
-                    id: notepad.id,
-                    top: notepad.style.top,
-                    left: notepad.style.left,
-                    width: notepad.style.width,
-                    height: notepad.style.height,
-                    title: notepad.querySelector('.notepad-title').textContent,
-                    isQuickNotesPad: notepad.hasAttribute('data-quick-notes'),
-                    isLocked: notepad.classList.contains('locked'),
-                    content: contentDiv ? contentDiv.innerHTML : '' 
-                });
-            });
-
-            // Package layout, quickNotes, and background
-            const fullUserData = {
-                layout: layoutData,
-                quickNotes: quickNotes,
-                background: localStorage.getItem('backgroundImageUrl') || ''
-            };
-
-            const jsonString = JSON.stringify(fullUserData);
-
-            // 1. Save to local storage (backup)
-            localStorage.setItem(PRESET_STORAGE_KEY, jsonString);
-
-            // 2. Save to Google Sheets (Cloud)
-            const saveBtn = document.getElementById('save-preset-btn');
-            saveBtn.textContent = "⏳ Saving...";
-
-            fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                body: JSON.stringify({ username: currentUser, password: currentPassword, preset: jsonString })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'error') {
-                    alert("Save Failed: " + data.message);
-                    saveBtn.textContent = "❌ Error";
-                } else {
-                    saveBtn.textContent = "✅ Saved Everything!";
-                    setTimeout(() => { saveBtn.textContent = "💾 Save Preset (Cloud)"; }, 2000);
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Error saving to cloud. Check console.");
-                saveBtn.textContent = "❌ Error";
-            });
-        }
-
-        // *** UPDATED LOAD: UNPACKS EVERYTHING ***
-        function loadNotepadPresetFromCloud(jsonString) {
-            try {
-                if (!jsonString) return false;
-                const parsedData = JSON.parse(jsonString);
-                
-                let layoutData = [];
-
-                // Handle old format vs new format
-                if (Array.isArray(parsedData)) {
-                    layoutData = parsedData;
-                } else {
-                    layoutData = parsedData.layout || [];
-                    
-                    // Restore Quick Notes
-                    if (parsedData.quickNotes) {
-                        quickNotes = parsedData.quickNotes;
-                        localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(quickNotes));
-                    }
-
-                    // Restore Background
-                    if (parsedData.background) {
-                        document.documentElement.style.setProperty('--background-url', `url('${parsedData.background}')`);
-                        document.getElementById('bg-url').value = parsedData.background;
-                        localStorage.setItem('backgroundImageUrl', parsedData.background);
-                    } else {
-                        clearBackgroundImage();
-                    }
-                }
-
-                // Restore Layout
-                let maxId = 2; 
-                layoutData.forEach(data => {
-                    const match = data.id.match(/note(\d+)/);
-                    if (match) maxId = Math.max(maxId, parseInt(match[1]));
-                    createRestoredNotepad(data);
-                });
-                notepadCounter = maxId;
-                return true; 
-            } catch (e) {
-                console.error('Error loading preset:', e);
-                return false;
-            }
-        }
-
-        function createRestoredNotepad(data) {
             const newNotepad = document.createElement('div');
-            newNotepad.id = data.id;
+            newNotepad.id = newId;
             newNotepad.className = 'notepad';
-            newNotepad.style.top = data.top;
-            newNotepad.style.left = data.left;
-            newNotepad.style.width = data.width;
-            newNotepad.style.height = data.height;
-            if (data.isLocked) newNotepad.classList.add('locked');
-            if (data.isQuickNotesPad) newNotepad.setAttribute('data-quick-notes', 'true');
-
-            const contentDivId = `text-${data.id}`;
-            const lockEmoji = data.isLocked ? '🔓' : '🔒'; 
-            let innerHTML = `
-                <div class="notepad-header">
-                    <span class="notepad-title" data-draggable-handle="true">${data.title}</span>
-                    <button class="lock-btn" onclick="toggleLock('${data.id}')">${lockEmoji}</button>
-                    <button class="close-btn" onclick="deleteNotepad('${data.id}')">X</button>
+            newNotepad.style.top = `${50 + (maxNotepadId % 5) * 20}px`; // Stagger new notes
+            newNotepad.style.left = `${50 + (maxNotepadId % 5) * 20}px`;
+            newNotepad.style.width = '300px';
+            newNotepad.style.height = '200px';
+            newNotepad.dataset.notepadId = newId;
+            
+            newNotepad.innerHTML = `
+                <div class="notepad-header" data-draggable-handle="true">
+                    <span class="notepad-title" contenteditable="false">Untitled Note ${maxNotepadId}</span>
+                    <button class="lock-btn" onclick="toggleLock('${newId}')">🔓</button>
+                    <button class="close-btn" onclick="deleteNotepad('${newId}')">X</button>
                 </div>
                 <div class="notepad-content">
-                    <div class="button-group" id="formatting-buttons-${data.id}">
-                        <button data-command="bold" onclick="formatText('${contentDivId}', 'bold')"><b>B</b></button>
-                        <button data-command="italic" onclick="formatText('${contentDivId}', 'italic')"><i>I</i></button>
-                        <button data-command="underline" onclick="formatText('${contentDivId}', 'underline')"><u>U</u></button>
-                        <button data-command="custom-large-text" onclick="formatText('${contentDivId}', 'custom-large-text')">Big Text</button>
-                    </div>`;
-            if (data.isQuickNotesPad) innerHTML += `<div class="button-group quick-notes-buttons" id="quick-notes-buttons-${data.id}"></div>`;
-            innerHTML += `<div id="${contentDivId}" class="rich-text-content" contenteditable="true">${data.content}</div></div>`;
-            
-            newNotepad.innerHTML = innerHTML;
-            document.body.appendChild(newNotepad);
+                    <div class="button-group" id="formatting-buttons-${newId}"></div>
+                    <div id="text-${newId}" class="rich-text-content" contenteditable="true">Start typing here...</div>
+                </div>
+            `;
+            container.appendChild(newNotepad);
             makeDraggable(newNotepad);
             makeTitleEditable(newNotepad);
+            populateQuickNoteButtons(newId);
+            bringToFront(newNotepad);
+            newNotepad.classList.add('focus');
+        }
 
-            const contentDiv = document.getElementById(contentDivId);
-            contentDiv.addEventListener('mouseup', () => updateButtonVisualState(contentDivId));
-            contentDiv.addEventListener('keyup', () => updateButtonVisualState(contentDivId));
-            contentDiv.addEventListener('click', () => updateButtonVisualState(contentDivId));
-            contentDiv.addEventListener('paste', handlePaste); 
-            contentDiv.addEventListener('copy', handleCopy); 
+        function deleteNotepad(id) {
+            const notepad = document.getElementById(id);
+            if (notepad && id !== 'quick-notes-editor' && confirm('Are you sure you want to delete this notepad?')) {
+                notepad.remove();
+            }
+        }
+
+        function toggleLock(id) {
+            const notepad = document.getElementById(id);
+            const lockBtn = notepad.querySelector('.lock-btn');
             
-            // Apply formatting fix on load
-            contentDiv.focus();
-            document.execCommand('defaultParagraphSeparator', false, 'br');
-            contentDiv.blur();
-
-            if (data.isQuickNotesPad) populateQuickNoteButtons(data.id);
+            if (notepad.classList.contains('locked')) {
+                notepad.classList.remove('locked');
+                lockBtn.innerHTML = '🔓';
+            } else {
+                notepad.classList.add('locked');
+                lockBtn.innerHTML = '🔒';
+            }
         }
 
-        // --- 8. DRAG, DROP, RENAME & DELETE LOGIC ---
-        function bringToFront(element) {
-            if (element.id !== 'content-zoom-modal') element.style.zIndex = ++zIndexCounter;
-            else element.style.zIndex = 9999; 
-        }
+        // --- 2. DRAG & DROP LOGIC (Preserved from user's file) ---
         
         function makeDraggable(element) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            const dragHandle = element.querySelector('.notepad-header');
+            const header = element.querySelector('[data-draggable-handle="true"]');
             
-            new ResizeObserver(() => {
-                if (element.classList.contains('locked')) return; 
-                const currentWidth = element.offsetWidth;
-                const maxWidth = window.innerWidth - element.offsetLeft - SCROLLBAR_WIDTH; 
-                if (currentWidth > maxWidth) element.style.width = maxWidth + 'px';
-            }).observe(element);
-            
+            if (header) {
+                header.onmousedown = dragMouseDown;
+                header.ontouchstart = dragTouchStart;
+            }
+
             function dragMouseDown(e) {
-                if (element.classList.contains('locked')) return; 
                 e = e || window.event;
-                if (e.target.closest('button') || e.target.classList.contains('zoom-btn') || (e.target.hasAttribute('contenteditable') && e.target.getAttribute('contenteditable') === 'true')) {
-                    bringToFront(element); return;
-                }
+                if (element.classList.contains('locked')) return;
+                
+                if (e.target.closest('button') || e.target.closest('input') || e.target.closest('.notepad-title[contenteditable="true"]')) return;
+                
                 e.preventDefault();
-                bringToFront(element);
-                pos3 = e.clientX; pos4 = e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
                 document.onmouseup = closeDragElement;
                 document.onmousemove = elementDrag;
+                element.classList.add('dragging');
             }
+            
+            function dragTouchStart(e) {
+                e = e || window.event;
+                if (element.classList.contains('locked')) return;
+                if (e.target.closest('button') || e.target.closest('input') || e.target.closest('.notepad-title[contenteditable="true"]')) return;
+                
+                e.preventDefault();
+                const touch = e.touches[0];
+                pos3 = touch.clientX;
+                pos4 = touch.clientY;
+                document.ontouchend = closeDragElement;
+                document.ontouchmove = elementDragTouch;
+                element.classList.add('dragging');
+            }
+
             function elementDrag(e) {
-                if (element.classList.contains('locked')) return; 
                 e = e || window.event;
                 e.preventDefault();
-                pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
-                pos3 = e.clientX; pos4 = e.clientY;
-                let newTop = element.offsetTop - pos2;
-                let newLeft = element.offsetLeft - pos1;
-                newTop = Math.max(CONTROL_BAR_HEIGHT, newTop); 
-                newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - element.offsetWidth - SCROLLBAR_WIDTH));
-                element.style.top = newTop + "px";
-                element.style.left = newLeft + "px";
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                updatePosition(element, pos1, pos2);
             }
-            function closeDragElement() { document.onmouseup = null; document.onmousemove = null; }
             
-            if (dragHandle) dragHandle.onmousedown = dragMouseDown;
-            element.addEventListener('click', (e) => {
-                if (!e.target.closest('button') && !e.target.closest('.notepad-header')) bringToFront(element);
-            });
-            
-            element.enableDrag = () => { dragHandle.onmousedown = dragMouseDown; element.style.resize = 'both'; };
-            element.disableDrag = () => { dragHandle.onmousedown = null; element.style.resize = 'none'; };
-            
-            if (element.classList.contains('locked')) element.disableDrag(); else element.enableDrag();
+            function elementDragTouch(e) {
+                e = e || window.event;
+                const touch = e.touches[0];
+                pos1 = pos3 - touch.clientX;
+                pos2 = pos4 - touch.clientY;
+                pos3 = touch.clientX;
+                pos4 = touch.clientY;
+                updatePosition(element, pos1, pos2);
+            }
+
+            function updatePosition(el, dx, dy) {
+                const newTop = el.offsetTop - dy;
+                const newLeft = el.offsetLeft - dx;
+
+                // Simple boundary check (prevents dragging far off-screen)
+                if (newTop >= 0) el.style.top = newTop + "px";
+                if (newLeft >= 0) el.style.left = newLeft + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+                document.ontouchend = null;
+                document.ontouchmove = null;
+                element.classList.remove('dragging');
+            }
         }
-
-        function toggleLock(notepadId) {
-            const notepad = document.getElementById(notepadId);
-            const lockButton = notepad.querySelector('.lock-btn');
-            const isLocked = notepad.classList.toggle('locked');
-            lockButton.textContent = isLocked ? '🔓' : '🔒'; 
-            isLocked ? notepad.disableDrag() : notepad.enableDrag();
-        }
-
-        function deleteNotepad(notepadId) {
-            const notepad = document.getElementById(notepadId);
-            const title = notepad.querySelector('.notepad-title').textContent.trim();
-            if (confirm(`Delete "${title}"?`)) notepad.remove();
-        }
-
-        function createNewNotepad(withButtons) {
-            notepadCounter++;
-            const noteId = 'note' + notepadCounter;
-            const headerTitle = withButtons ? `Note ${notepadCounter}: Quick Notes` : `Note ${notepadCounter}: Empty Pad`;
-            const contentDivId = `text-${noteId}`;
-            const newNotepad = document.createElement('div');
-            newNotepad.id = noteId;
-            newNotepad.className = 'notepad';
-            newNotepad.style.top = (Math.random() * 100 + CONTROL_BAR_HEIGHT + 50) + 'px';
-            newNotepad.style.left = (Math.random() * 100 + 100) + 'px';
-            bringToFront(newNotepad);
-            if (withButtons) newNotepad.setAttribute('data-quick-notes', 'true');
-
-            let innerHTML = `
-                <div class="notepad-header">
-                    <span class="notepad-title" data-draggable-handle="true">${headerTitle}</span>
-                    <button class="lock-btn" onclick="toggleLock('${noteId}')">🔒</button>
-                    <button class="close-btn" onclick="deleteNotepad('${noteId}')">X</button>
-                </div>
-                <div class="notepad-content">
-                    <div class="button-group" id="formatting-buttons-${noteId}">
-                        <button data-command="bold" onclick="formatText('${contentDivId}', 'bold')"><b>B</b></button>
-                        <button data-command="italic" onclick="formatText('${contentDivId}', 'italic')"><i>I</i></button>
-                        <button data-command="underline" onclick="formatText('${contentDivId}', 'underline')"><u>U</u></button>
-                        <button data-command="custom-large-text" onclick="formatText('${contentDivId}', 'custom-large-text')">Big Text</button>
-                    </div>`;
-            if (withButtons) innerHTML += `<div class="button-group quick-notes-buttons" id="quick-notes-buttons-${noteId}"></div>`;
-            innerHTML += `<div id="${contentDivId}" class="rich-text-content" contenteditable="true"></div></div>`;
-            
-            newNotepad.innerHTML = innerHTML;
-            document.body.appendChild(newNotepad);
-            makeDraggable(newNotepad);
-            makeTitleEditable(newNotepad);
-            
-            const contentDiv = document.getElementById(contentDivId);
-            contentDiv.focus();
-            document.execCommand('defaultParagraphSeparator', false, 'br');
-            contentDiv.blur();
-            
-            contentDiv.addEventListener('mouseup', () => updateButtonVisualState(contentDivId));
-            contentDiv.addEventListener('keyup', () => updateButtonVisualState(contentDivId));
-            contentDiv.addEventListener('click', () => updateButtonVisualState(contentDivId));
-            contentDiv.addEventListener('paste', handlePaste); 
-            contentDiv.addEventListener('copy', handleCopy); 
-            
-            if (withButtons) populateQuickNoteButtons(noteId);
-        }
-
+        
         function makeTitleEditable(notepadElement) {
             const titleSpan = notepadElement.querySelector('.notepad-title');
             titleSpan.addEventListener('dblclick', () => {
@@ -1318,11 +727,514 @@
                 if (e.key === 'Enter') { e.preventDefault(); titleSpan.blur(); }
             });
         }
+        
+        // --- 3. RICH TEXT FORMATTING ---
 
+        function formatText(editorId, command) {
+            const editor = document.getElementById(editorId);
+            if (!editor) return;
+
+            editor.focus(); 
+            document.execCommand('styleWithCSS', false, null);
+
+            if (command === 'custom-large-text') {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    const fragment = range.extractContents();
+                    
+                    const span = document.createElement('span');
+                    span.className = 'custom-large-text';
+                    span.appendChild(fragment);
+
+                    range.insertNode(span);
+                    selection.removeAllRanges();
+                    selection.add(range);
+                }
+            } else {
+                document.execCommand(command, false, null);
+            }
+        }
+        
+        // --- 4. DATA SAVE AND LOAD (Local & Cloud with Chunking) ---
+
+        // Cloud save function, also handles local save if isCloudSave is false
+        async function saveQuickNotes(isCloudSave = false) {
+            const notepads = document.querySelectorAll('.notepad');
+            const data = [];
+
+            // 1. Gather all notepad data
+            notepads.forEach(notepad => {
+                const contentDiv = notepad.querySelector('.rich-text-content');
+                if (!contentDiv) return; // Skip chat box which doesn't have rich-text-content
+
+                data.push({
+                    id: notepad.dataset.notepadId || notepad.id,
+                    top: notepad.style.top,
+                    left: notepad.style.left,
+                    width: notepad.style.width,
+                    height: notepad.style.height,
+                    title: notepad.querySelector('.notepad-title').textContent,
+                    isLocked: notepad.classList.contains('locked'),
+                    content: contentDiv.innerHTML,
+                    zIndex: notepad.style.zIndex
+                });
+            });
+
+            const dataString = JSON.stringify(data);
+            
+            // 2. Perform Local Storage Save (always save locally for instant recovery)
+            try {
+                localStorage.setItem(PRESET_STORAGE_KEY, dataString);
+            } catch (e) {
+                console.error('Could not save notepad preset to local storage:', e);
+            }
+
+            const saveBtn = document.getElementById('save-cloud-btn');
+            const originalText = saveBtn.innerHTML;
+            const originalBg = saveBtn.style.backgroundColor;
+
+            if (!isCloudSave) {
+                 saveBtn.innerHTML = '✅ Local Saved!';
+                 saveBtn.style.backgroundColor = '#2ecc71'; 
+                 setTimeout(() => { saveBtn.innerHTML = originalText; saveBtn.style.backgroundColor = originalBg; }, 1500);
+                 return;
+            }
+            
+            // --- 3. CLOUD SAVE LOGIC with Chunking (CRITICAL FIX) ---
+            
+            if (!currentUser) { 
+                document.getElementById('login-error-message').textContent = 'Please log in to save to the cloud.';
+                document.getElementById('login-error-message').style.display = 'block';
+                openLoginModal();
+                return; 
+            }
+            
+            if (!userPassword) {
+                 // Should not happen if user is logged in, but safe check
+                 alert("Authentication token missing. Please log out and log in again.");
+                 return;
+            }
+
+            // CRITICAL: Split the data string into chunks for saving to multiple columns
+            const presetChunks = chunkString(dataString, CHUNK_SIZE);
+            
+            if (presetChunks.length > MAX_CHUNKS) {
+                confirm(`❌ CLOUD SAVE FAILED: Your notes exceed the maximum limit of ${MAX_CHUNKS} columns. Please delete some text.`);
+                return; 
+            }
+
+            saveBtn.innerHTML = 'Saving...';
+            saveBtn.style.backgroundColor = '#f1c40f'; // Yellow for saving
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    // Include the password for server verification before saving
+                    body: JSON.stringify({
+                        username: currentUser, 
+                        password: userPassword, 
+                        presetChunks: presetChunks // Send the array of chunks
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                     saveBtn.innerHTML = '✅ Cloud Saved!';
+                     saveBtn.style.backgroundColor = '#2ecc71';
+                } else {
+                    console.error("Cloud Save Server Error:", result.message || "Unknown error");
+                    saveBtn.innerHTML = '❌ Save Failed';
+                    saveBtn.style.backgroundColor = '#e74c3c';
+                    confirm(`Error saving to cloud: ${result.message}`);
+                }
+            } catch (e) {
+                console.error("Error saving to cloud (Network/JSON Parse Failure):", e);
+                saveBtn.innerHTML = '❌ Save Failed';
+                saveBtn.style.backgroundColor = '#e74c3c';
+                confirm("Error saving to cloud (Network failure).");
+            } finally {
+                 setTimeout(() => { saveBtn.innerHTML = originalText; saveBtn.style.backgroundColor = originalBg; }, 1500);
+            }
+        }
+
+        // Loads from local storage or from the cloud-provided string
+        function loadQuickNotes(presetDataString) {
+            const dataToLoad = presetDataString || localStorage.getItem(PRESET_STORAGE_KEY);
+            
+            if (!dataToLoad || dataToLoad === '[]') return; // Skip if no data
+            
+            try {
+                const parsedData = JSON.parse(dataToLoad);
+                const container = document.getElementById('quick-notes-container');
+                
+                // Clear all existing dynamically added notepads
+                document.querySelectorAll('.notepad').forEach(n => {
+                    if (n.id !== 'quick-notes-editor' && n.id !== 'chat-box') { 
+                        n.remove();
+                    }
+                });
+                
+                let tempMaxId = 0;
+                
+                parsedData.forEach(data => {
+                    // Extract ID number for new note creation tracking
+                    const idNumberMatch = data.id.match(/note(\d+)/);
+                    const idNumber = idNumberMatch ? parseInt(idNumberMatch[1]) : 0;
+                    if (idNumber > tempMaxId) tempMaxId = idNumber;
+                    
+                    const isQuickNotesPad = data.id === 'quick-notes' || data.id === 'quick-notes-editor';
+
+                    if (isQuickNotesPad) {
+                        // Update the fixed Quick Notes content and style
+                        const qnContent = document.getElementById('text-quick-notes');
+                        if (qnContent) {
+                            qnContent.innerHTML = data.content;
+                            const qnPad = document.getElementById('quick-notes-editor');
+                            if (qnPad) {
+                                qnPad.style.top = data.top;
+                                qnPad.style.left = data.left;
+                                qnPad.style.width = data.width;
+                                qnPad.style.height = data.height;
+                                qnPad.style.zIndex = data.zIndex;
+                                qnPad.classList.toggle('locked', data.isLocked);
+                                qnPad.querySelector('.lock-btn').innerHTML = data.isLocked ? '🔒' : '🔓';
+                                qnPad.querySelector('.notepad-title').textContent = data.title;
+                                qnPad.querySelector('.notepad-title').setAttribute('contenteditable', 'false');
+                            }
+                        }
+                    } else {
+                        // Recreate regular notepad
+                        const newNotepad = document.createElement('div');
+                        newNotepad.id = data.id;
+                        newNotepad.className = 'notepad';
+                        newNotepad.style.top = data.top;
+                        newNotepad.style.left = data.left;
+                        newNotepad.style.width = data.width;
+                        newNotepad.style.height = data.height;
+                        newNotepad.style.zIndex = data.zIndex;
+                        newNotepad.dataset.notepadId = data.id;
+                        
+                        newNotepad.classList.toggle('locked', data.isLocked);
+                        
+                        newNotepad.innerHTML = `
+                            <div class="notepad-header" data-draggable-handle="true">
+                                <span class="notepad-title" contenteditable="false">${data.title}</span>
+                                <button class="lock-btn" onclick="toggleLock('${data.id}')">${data.isLocked ? '🔒' : '🔓'}</button>
+                                <button class="close-btn" onclick="deleteNotepad('${data.id}')">X</button>
+                            </div>
+                            <div class="notepad-content">
+                                <div class="button-group" id="formatting-buttons-${data.id}"></div>
+                                <div id="text-${data.id}" class="rich-text-content" contenteditable="true">${data.content}</div>
+                            </div>
+                        `;
+                        container.appendChild(newNotepad);
+                        makeDraggable(newNotepad);
+                        makeTitleEditable(newNotepad);
+                        populateQuickNoteButtons(data.id);
+                    }
+                });
+                
+                maxNotepadId = tempMaxId;
+
+            } catch (e) {
+                console.error("Error parsing or loading notepad preset:", e);
+                // If it's the cloud data that failed, we continue with local or fresh start.
+                if (presetDataString) {
+                     confirm("Error: Cloud data appears corrupted. Loading local version if available.");
+                     loadQuickNotes(); // Try loading from local storage as a fallback
+                } else {
+                     confirm("Error: Corrupted local saved data found. Starting fresh.");
+                     localStorage.removeItem(PRESET_STORAGE_KEY);
+                }
+            }
+        }
+        
+        // --- 5. AUTHENTICATION LOGIC ---
+        
+        function openLoginModal() {
+            document.getElementById('login-overlay').style.display = 'flex';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('login-error-message').style.display = 'none';
+        }
+
+        function updateAuthUI(username) {
+            currentUser = username;
+            document.getElementById('welcome-message').textContent = `Welcome, ${username}!`;
+            document.getElementById('logout-btn').style.display = 'inline-block';
+            document.getElementById('login-overlay').style.display = 'none'; // Close modal
+            console.log(`User logged in: ${username}`);
+        }
+
+        function resetAuthUI() {
+            currentUser = null;
+            userPassword = null;
+            document.getElementById('welcome-message').textContent = 'Not Logged In';
+            document.getElementById('logout-btn').style.display = 'none';
+            stopChatPolling();
+            console.log("User logged out.");
+        }
+
+        async function loginUser() {
+            const username = document.getElementById('auth-username').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const errorElement = document.getElementById('login-error-message');
+            errorElement.style.display = 'none';
+
+            if (!username || !password) {
+                errorElement.textContent = 'Username and password cannot be empty.';
+                errorElement.style.display = 'block';
+                return;
+            }
+
+            try {
+                // The GET request handles loading the data from the 4 columns
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+                const result = await response.json();
+
+                if (result.status === 'found') {
+                    // Store credentials globally for save requests
+                    userPassword = password; 
+                    updateAuthUI(username);
+                    
+                    // Load the content using the full data string received from the server
+                    loadQuickNotes(result.data);
+                    
+                    // Start chat polling only after successful login/load
+                    if (document.getElementById('chat-box').style.display === 'flex') {
+                        startChatPolling(); 
+                    }
+                } else if (result.status === 'wrong_password') {
+                    errorElement.textContent = 'Incorrect Password.';
+                    errorElement.style.display = 'block';
+                } else if (result.status === 'user_not_found') {
+                    errorElement.textContent = 'Account not found. Please sign up first.';
+                    errorElement.style.display = 'block';
+                } else {
+                    errorElement.textContent = 'Login failed due to server error.';
+                    errorElement.style.display = 'block';
+                }
+            } catch (e) {
+                console.error('Login error:', e);
+                errorElement.textContent = 'Network error or invalid script URL.';
+                errorElement.style.display = 'block';
+            }
+        }
+
+        async function signupUser() {
+            const username = document.getElementById('auth-username').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const errorElement = document.getElementById('login-error-message');
+            errorElement.style.display = 'none';
+            
+            if (!username || !password) {
+                errorElement.textContent = 'Username and password cannot be empty.';
+                errorElement.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'signup', username: username, password: password })
+                });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    confirm('Signup successful! You can now log in.');
+                    // Attempt to log the user in immediately after successful signup
+                    loginUser();
+                } else {
+                    errorElement.textContent = result.message || 'Signup failed. User may already exist.';
+                    errorElement.style.display = 'block';
+                }
+            } catch (e) {
+                console.error('Signup error:', e);
+                errorElement.textContent = 'Network error during signup.';
+                errorElement.style.display = 'block';
+            }
+        }
+
+        function logoutUser() {
+            if (confirm('Are you sure you want to log out?')) {
+                resetAuthUI();
+                // Optionally clear local storage to force a fresh start or local load on next run
+                // localStorage.removeItem(PRESET_STORAGE_KEY); 
+            }
+        }
+
+        // --- 6. BACKGROUND CHANGER LOGIC ---
+        
+        function openBackgroundModal() {
+            document.getElementById('background-modal').style.display = 'flex';
+        }
+
+        function closeBackgroundModal() {
+            document.getElementById('background-modal').style.display = 'none';
+        }
+
+        function loadBackgroundImage() {
+            const storedUrl = localStorage.getItem(BG_STORAGE_KEY);
+            if (storedUrl) {
+                document.documentElement.style.setProperty('--background-url', `url('${storedUrl}')`);
+            } else {
+                document.documentElement.style.setProperty('--background-url', 'none'); 
+            }
+        }
+
+        function applyBackground() {
+            const url = document.getElementById('bg-url-input').value.trim();
+            if (url) {
+                document.documentElement.style.setProperty('--background-url', `url('${url}')`);
+                localStorage.setItem(BG_STORAGE_KEY, url);
+                closeBackgroundModal();
+            } else {
+                document.documentElement.style.setProperty('--background-url', 'none');
+                localStorage.removeItem(BG_STORAGE_KEY);
+                closeBackgroundModal();
+            }
+        }
+
+        // --- 7. CHAT LOGIC ---
+
+        let chatPollingInterval = null;
+
+        function toggleChatBox() {
+            const chatBox = document.getElementById('chat-box');
+            if (chatBox.style.display === 'none') {
+                if (!currentUser) {
+                    document.getElementById('login-error-message').textContent = 'Please log in to use the chat feature.';
+                    document.getElementById('login-error-message').style.display = 'block';
+                    openLoginModal();
+                    return;
+                }
+                chatBox.style.display = 'flex';
+                bringToFront(chatBox);
+                startChatPolling();
+            } else {
+                chatBox.style.display = 'none';
+                stopChatPolling();
+            }
+        }
+        
+        function startChatPolling() {
+            if (chatPollingInterval) clearInterval(chatPollingInterval);
+            fetchMessages(); 
+            chatPollingInterval = setInterval(fetchMessages, 3000); 
+            console.log("Chat polling started.");
+        }
+
+        function stopChatPolling() {
+            if (chatPollingInterval) clearInterval(chatPollingInterval);
+            chatPollingInterval = null;
+            document.getElementById('chat-status-icon').textContent = '😴 Offline';
+            document.getElementById('chat-status-icon').style.backgroundColor = '#6c757d'; 
+            console.log("Chat polling stopped.");
+        }
+
+        async function fetchMessages() {
+            if (!currentUser) return;
+
+            const statusIcon = document.getElementById('chat-status-icon');
+            const container = document.getElementById('chat-messages-container');
+            // Check if the user was scrolled near the bottom
+            const wasScrolledToBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 5; 
+
+            statusIcon.textContent = '🔄 Fetching...';
+            statusIcon.style.backgroundColor = '#f39c12'; 
+
+            try {
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getChat`);
+                const result = await response.json();
+
+                if (result.status === 'success' && result.messages) {
+                    const fragment = document.createDocumentFragment();
+                    result.messages.forEach(msg => {
+                        const isMe = msg.user === currentUser;
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = `chat-message ${isMe ? 'chat-me' : 'chat-other'}`;
+                        
+                        messageDiv.innerHTML = `
+                            <span class="chat-timestamp">${isMe ? 'You' : msg.user} (${msg.timestamp})</span>
+                            <div class="chat-bubble">${msg.message}</div>
+                        `;
+                        fragment.appendChild(messageDiv);
+                    });
+
+                    container.innerHTML = ''; 
+                    container.appendChild(fragment);
+
+                    statusIcon.textContent = '🟢 Online';
+                    statusIcon.style.backgroundColor = '#2ecc71';
+
+                    // Only scroll to bottom if they were already there
+                    if (wasScrolledToBottom) {
+                        container.scrollTop = container.scrollHeight;
+                    }
+                } else {
+                    statusIcon.textContent = '🔴 Failed';
+                    statusIcon.style.backgroundColor = '#e74c3c';
+                }
+
+            } catch (e) {
+                console.error("Chat fetch error:", e);
+                statusIcon.textContent = '🔴 Error';
+                statusIcon.style.backgroundColor = '#e74c3c';
+            }
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            const statusIcon = document.getElementById('chat-status-icon');
+
+            if (!message || !currentUser) return;
+
+            input.value = ''; // Clear input immediately
+            statusIcon.textContent = '...Sending';
+            statusIcon.style.backgroundColor = '#3498db';
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        type: 'chat', 
+                        username: currentUser, 
+                        message: message 
+                    })
+                });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    await fetchMessages(); 
+                } else {
+                    confirm("Failed to send message: " + (result.message || "Unknown error"));
+                }
+            } catch (e) {
+                console.error("Chat send error:", e);
+                confirm("Error sending message. Check console.");
+            }
+        }
+
+
+        // --- 8. INITIALIZATION AND SETUP ---
+        
         function initialize() {
+            // Recalculate control bar height for responsive layout
             CONTROL_BAR_HEIGHT = document.getElementById('controls').offsetHeight + 2; 
             document.documentElement.style.setProperty('--control-height', `${CONTROL_BAR_HEIGHT}px`);
-            loadQuickNotes(); // Loads from local storage (for guest/session)
+            
+            // Apply functions to the fixed notepad
+            makeDraggable(document.getElementById('quick-notes-editor'));
+            makeTitleEditable(document.getElementById('quick-notes-editor'));
+            populateQuickNoteButtons('quick-notes');
+
+            // Load local data and background
+            loadQuickNotes(); 
             loadBackgroundImage();
             
             // Show login modal on start
