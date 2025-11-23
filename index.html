@@ -1104,7 +1104,7 @@
                     saveBtn.textContent = "❌ Error";
                 } else {
                     saveBtn.textContent = "✅ Saved Everything!";
-                    setTimeout(() => { saveBtn.textContent = "💾 Save Preset (Cloud)"; }, 2000);
+                    setTimeout(() => { saveBtn.textContent = "(Cloud)"; }, 2000);
                 }
             })
             .catch(err => {
