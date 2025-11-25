@@ -6,7 +6,7 @@
     
     <style>
         :root {
-            --background-url: none; 
+            --background-url: none;
         }
 
         body {
@@ -46,7 +46,8 @@
             box-shadow: 0 0 20px rgba(255,255,255,0.2);
             width: 300px;
         }
-        #login-box h2 { margin-top: 0; color: #333; }
+        #login-box h2 { margin-top: 0; color: #333;
+        }
         
         #login-box input {
             width: 90%;
@@ -55,7 +56,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 16px;
-            box-sizing: border-box; 
+            box-sizing: border-box;
         }
         
         #login-box button {
@@ -69,9 +70,10 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        #login-box button:hover { background-color: #0056b3; }
+        #login-box button:hover { background-color: #0056b3;
+        }
         #login-status { 
-            margin-top: 15px; 
+            margin-top: 15px;
             color: #dc3545; 
             font-size: 14px; 
             font-weight: bold; 
@@ -84,7 +86,6 @@
         #user-display {
             display: flex;
             align-items: center;
-            margin-left: auto;
             background: rgba(0,0,0,0.5);
             padding: 4px 12px;
             border-radius: 20px;
@@ -115,8 +116,8 @@
             align-items: center;
             backdrop-filter: blur(8px); 
             -webkit-backdrop-filter: blur(8px);
-            background-color: rgba(255, 255, 255, 0.2); 
-            overflow: hidden; 
+            background-color: rgba(255, 255, 255, 0.2);
+            overflow: visible; 
         }
         
         #toolbar-bg-mirror {
@@ -133,7 +134,7 @@
             filter: brightness(60%) contrast(120%); 
             opacity: 0.8; 
             transform: scaleY(-1);
-            background-position: center calc(var(--control-height) * -1); 
+            background-position: center calc(var(--control-height) * -1);
         }
 
         #controls button {
@@ -147,7 +148,7 @@
             cursor: pointer;
             transition: background-color 0.2s, color 0.2s; 
             white-space: nowrap;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); 
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
         
         #controls button:hover {
@@ -155,7 +156,7 @@
         }
 
         #save-preset-btn {
-            background-color: rgba(0, 0, 128, 0.7); 
+            background-color: rgba(0, 0, 128, 0.7);
         }
         #save-preset-btn:hover {
             background-color: rgba(0, 0, 160, 0.9);
@@ -168,7 +169,7 @@
         }
         
         .image-control button {
-            background-color: rgba(0, 100, 200, 0.7); 
+            background-color: rgba(0, 100, 200, 0.7);
         }
         .image-control button:hover {
             background-color: rgba(0, 120, 240, 0.9);
@@ -182,6 +183,103 @@
             font-size: 13px;
         }
         
+        /* --- CLOCK & ALARM STYLES --- */
+        #clock-container {
+            margin-left: auto; 
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #ph-clock {
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ff9d;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 14px;
+            border: 1px solid #333;
+            box-shadow: 0 0 5px rgba(0, 255, 157, 0.2);
+        }
+
+        #alarm-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        /* --- UPDATED ALARM BUTTON --- */
+        #alarm-btn {
+            width: 80px; /* Static width to fit "🔔 60m" without moving neighbors */
+            text-align: center;
+            /* Inherits visual style from standard #controls button */
+        }
+
+        #alarm-dropdown {
+            display: none;
+            position: absolute;
+            top: 110%;
+            right: 0;
+            background-color: white;
+            min-width: 120px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            border-radius: 4px;
+            z-index: 20000;
+            overflow: hidden;
+        }
+
+        #alarm-dropdown button {
+            color: black !important;
+            background-color: white !important;
+            padding: 10px 16px !important;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            text-align: left;
+            border-radius: 0 !important;
+            border-bottom: 1px solid #eee !important;
+            box-shadow: none !important;
+        }
+
+        #alarm-dropdown button:hover {
+            background-color: #f1f1f1 !important;
+        }
+        
+        /* --- ALARM RINGING MODAL --- */
+        #alarm-ringing-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.8);
+            z-index: 20001;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            backdrop-filter: blur(5px);
+        }
+        .alarm-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.5);
+            animation: pulse-red 1s infinite;
+        }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+            50% { box-shadow: 0 0 60px rgba(255, 0, 0, 0.8); }
+            100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+        }
+        .alarm-content h1 { margin: 0 0 20px 0; color: #d9534f; font-size: 3em; }
+        .alarm-buttons { display: flex; gap: 20px; justify-content: center; margin-top: 20px; }
+        .btn-stop { background-color: #d9534f !important; padding: 15px 30px !important; font-size: 1.2em !important; }
+        .btn-snooze { background-color: #0275d8 !important; padding: 15px 30px !important; font-size: 1.2em !important; }
+
+
         /* --- Notepad Base Styles --- */
         .notepad {
             position: absolute;
@@ -237,7 +335,7 @@
             z-index: 1;
         }
         .lock-btn { 
-            background-color: #8b0000; 
+            background-color: #8b0000;
             margin-left: auto; 
         }
         .lock-btn:hover {
@@ -331,7 +429,7 @@
         .editor-rich-text-content font[size="5"],
         #zoom-modal-content-area font[size="5"],
         .rich-text-content .large-text { 
-            font-size: 1.6em; 
+            font-size: 1.6em;
             display: inline;
         }
         
@@ -362,10 +460,14 @@
             color: white; 
             font-size: 13px;
         }
-        #add-note-btn { background-color: #28a745; }
-        #add-note-btn:hover { background-color: #34c759; }
-        #save-notes-btn { background-color: #007bff; }
-        #save-notes-btn:hover { background-color: #4dabf5; }
+        #add-note-btn { background-color: #28a745;
+        }
+        #add-note-btn:hover { background-color: #34c759;
+        }
+        #save-notes-btn { background-color: #007bff;
+        }
+        #save-notes-btn:hover { background-color: #4dabf5;
+        }
 
         #quick-notes-editor .notepad-content {
             display: grid;
@@ -374,7 +476,7 @@
             gap: 8px;
             overflow-y: auto;
             padding: 10px;
-            align-items: stretch; 
+            align-items: stretch;
         }
         #quick-notes-editor strong {
             padding-bottom: 5px;
@@ -398,7 +500,7 @@
             align-items: center;
         }
         #quick-notes-editor .formatting-row button {
-            padding: 3px 6px; 
+            padding: 3px 6px;
             font-size: 11px; 
             border: 1px solid #ddd;
             background-color: #eee;
@@ -410,7 +512,7 @@
             background-color: #e0e0e0;
         }
         .editor-rich-text-content {
-            flex-grow: 1; 
+            flex-grow: 1;
             width: 100%;
             min-height: 50px; 
             max-height: 70px; 
@@ -419,20 +521,20 @@
             font-size: 14px;
             padding: 5px;
             box-sizing: border-box;
-            overflow-y: auto; 
+            overflow-y: auto;
             outline: none;
             padding-right: 25px; 
         }
         #quick-notes-editor input[type="text"] {
-            grid-column: 1 / 2; 
+            grid-column: 1 / 2;
             padding: 5px;
             border: 1px solid #ddd;
             width: 100%;
             box-sizing: border-box;
-            align-self: stretch; 
+            align-self: stretch;
         }
         #quick-notes-editor .icon-container {
-            grid-column: 3 / 4; 
+            grid-column: 3 / 4;
             display: flex;
             justify-content: center;
             align-items: center; 
@@ -449,7 +551,7 @@
             padding: 0;
             line-height: 1;
             color: #dc3545;
-            margin: 0; 
+            margin: 0;
         }
         .zoom-btn {
             position: absolute;
@@ -464,11 +566,12 @@
             line-height: 1;
             z-index: 10;
         }
-        .zoom-btn:hover { color: #007bff; }
+        .zoom-btn:hover { color: #007bff;
+        }
 
         /* --- Zoom Modal Style --- */
         #content-zoom-modal {
-            display: none; 
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -522,7 +625,8 @@
             border-radius: 3px;
             transition: background-color 0.1s, color 0.1s;
         }
-        #zoom-modal-toolbar button:hover { background-color: #e0e0e0; }
+        #zoom-modal-toolbar button:hover { background-color: #e0e0e0;
+        }
     </style>
 </head>
 <body>
@@ -533,6 +637,7 @@
             
             <input type="text" id="username-input" placeholder="Username" onkeydown="if(event.key==='Enter') loginUser()">
             <input type="password" id="password-input" placeholder="Password" onkeydown="if(event.key==='Enter') loginUser()">
+      
             
             <button onclick="loginUser()">Login</button>
             <div id="login-status"></div>
@@ -545,6 +650,7 @@
         <button id="create-quick-btn" onclick="createNewNotepad(true)">📝 Create w/ Quick Notes</button>
 
         <button id="edit-quick-notes-btn" onclick="toggleQuickNotesEditor()">✏️ Edit Quick Notes</button>
+  
         
         <button id="save-preset-btn" onclick="saveNotepadPreset()" style="">💾 Save Preset (Cloud)</button>
 
@@ -554,17 +660,43 @@
             <button id="clear-bg-btn" onclick="clearBackgroundImage()">❌</button>
         </div>
 
-        <div id="user-display" style="display:none;">
+        <div id="clock-container">
+            <div id="ph-clock">Loading Time...</div>
+            
+            <div id="alarm-wrapper">
+                <button id="alarm-btn" onclick="toggleAlarmMenu()">⏰</button>
+                <div id="alarm-dropdown">
+                    <button onclick="setAlarm(15)">15 Minutes</button>
+                    <button onclick="setAlarm(30)">30 Minutes</button>
+                    <button onclick="setAlarm(60)">1 Hour</button>
+                    <button id="cancel-alarm-btn" onclick="cancelAlarm()" style="color:red !important; display:none;">Cancel Alarm</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="user-display" style="display:none; margin-left: 10px;">
             <span id="current-user-name">Guest</span>
             <button id="logout-btn" onclick="logoutUser()">Logout</button>
         </div>
     </div>
     
+    <div id="alarm-ringing-modal">
+        <div class="alarm-content">
+            <h1>⏰ WAKE UP! ⏰</h1>
+            <p style="font-size: 1.5em; color: #333;">Your timer is done!</p>
+            <div class="alarm-buttons">
+                <button class="btn-snooze" onclick="snoozeAlarm()">💤 Snooze (10m)</button>
+                <button class="btn-stop" onclick="stopAlarm()">🛑 STOP</button>
+            </div>
+        </div>
+    </div>
+
     <div id="quick-notes-editor" class="notepad" style="display: none;">
         <div class="notepad-header">
             <span class="notepad-title" data-draggable-handle="true">Quick Notes Editor</span>
             
             <div id="editor-header-buttons">
+     
                 <button id="save-notes-btn" onclick="saveQuickNotes()">💾 Save Changes</button>
                 <button id="add-note-btn" onclick="addNewQuickNote()">➕ Add New Note</button>
                 <button class="close-btn" onclick="toggleQuickNotesEditor()">X</button>
@@ -574,6 +706,7 @@
             </div>
     </div>
 
+ 
     <div id="content-zoom-modal">
         <div id="zoom-modal-content">
             <div id="zoom-modal-header">
@@ -581,19 +714,20 @@
                 <button class="close-btn" onclick="closeZoomModal()">X</button>
             </div>
             <div class="formatting-row" id="zoom-modal-toolbar">
+         
                 <button data-command="bold" onclick="formatText('zoom-modal-content-area', 'bold')"><b>B</b></button>
                 <button data-command="italic" onclick="formatText('zoom-modal-content-area', 'italic')"><i>I</i></button>
                 <button data-command="underline" onclick="formatText('zoom-modal-content-area', 'underline')"><u>U</u></button>
                 <button data-command="custom-large-text" onclick="formatText('zoom-modal-content-area', 'custom-large-text')">Big Text</button>
             </div>
             <div id="zoom-modal-content-area" contenteditable="true"></div>
+      
         </div>
     </div>
 
     <script>
         // --- 1. GLOBAL VARIABLES & INITIAL SETUP ---
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvdYP2SVZ_OWKeFGeaFOiRN_fOk68JVSQq0aPQNgospQszkwl2jCBlwiDT2Fr-kbXo0g/exec"; 
-
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvdYP2SVZ_OWKeFGeaFOiRN_fOk68JVSQq0aPQNgospQszkwl2jCBlwiDT2Fr-kbXo0g/exec";
         let zIndexCounter = 1000;
         let notepadCounter = 2;
         let activeZoomNoteIndex = null;
@@ -604,17 +738,27 @@
         const SCROLLBAR_WIDTH = 17;
         
         let internalClipboardHTML = null;
-        let currentUser = null; 
+        let currentUser = null;
         let currentPassword = null; 
 
+        // Alarm Variables
+        let alarmTimeoutId = null;
+        let alarmIntervalId = null;
+        let alarmTargetTime = null;
+        const alarmSound = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+        alarmSound.loop = true;
+
         const DEFAULT_QUICK_NOTES = [
-            { label: "Opening:", text: "<font size='5'>Welcome to HP America’s favorite PC brand!</font> It’s our Black Friday sale, and I’m <b>Rain</b>. I've read your concern, and I'm glad to assist!" },
-            { label: "Probing:", text: "(Optional) Just wondering — do you currently own a computer / printer / laptop?<br>Let’s make sure we find the perfect device / supplies for you—mind if I ask a few quick questions about what you need? This is a really long script to test the maximum height restriction." },
-            { label: "Closing:", text: "Thank attention for choosing HP!" },
-            { label: "Sale 2:", text: "Welcome to HP - America's favorite PC brand! It's our Clear Warehouse Sale, I'm <b>Rain</b>. I've read your concern, and I'm glad to assist!" },
+            { label: "Opening:", text: "<font size='5'>Welcome to HP America’s favorite PC brand!</font> It’s our Black Friday sale, and I’m <b>Rain</b>. I've read your concern, and I'm glad to assist!"
+            },
+            { label: "Probing:", text: "(Optional) Just wondering — do you currently own a computer / printer / laptop?<br>Let’s make sure we find the perfect device / supplies for you—mind if I ask a few quick questions about what you need? This is a really long script to test the maximum height restriction."
+            },
+            { label: "Closing:", text: "Thank attention for choosing HP!"
+            },
+            { label: "Sale 2:", text: "Welcome to HP - America's favorite PC brand! It's our Clear Warehouse Sale, I'm <b>Rain</b>. I've read your concern, and I'm glad to assist!"
+            },
             { label: "Ref Link", text: "Link to internal knowledge base: <a href='https://internal.hp.com/kb/...' target='_blank'>https://internal.hp.com/kb/...</a>" }
         ];
-
         let quickNotes = JSON.parse(JSON.stringify(DEFAULT_QUICK_NOTES));
 
         // --- 2. LOGIN / LOGOUT LOGIC ---
@@ -625,14 +769,12 @@
             const username = usernameInput.value.trim();
             const password = passwordInput.value.trim();
             const statusDiv = document.getElementById('login-status');
-            
             if (!username || !password) {
                 statusDiv.textContent = "Please enter username AND password.";
                 return;
             }
 
             statusDiv.textContent = "Connecting...";
-            
             try {
                 const response = await fetch(`${GOOGLE_SCRIPT_URL}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
                 const result = await response.json();
@@ -640,21 +782,19 @@
                 // 1. SUCCESS: Only 'found' grants access
                 if (result.status === 'found') {
                     document.getElementById('login-overlay').style.display = 'none';
-                    
                     currentUser = username;
                     currentPassword = password;
                     document.getElementById('user-display').style.display = 'flex';
                     document.getElementById('current-user-name').textContent = `User: ${currentUser}`;
 
                     resetToDefaults();
-
                     // Handle potentially split data (multi-cell storage)
                     let cloudData = result.data;
-                    
                     // If the backend returns an object with parts, combine them
                     if (cloudData && typeof cloudData === 'object') {
                         if (cloudData.part1 || cloudData.part2) {
-                             cloudData = (cloudData.part1 || "") + (cloudData.part2 || "") + (cloudData.part3 || "") + (cloudData.part4 || "");
+                             cloudData = (cloudData.part1 || "") + 
+                             (cloudData.part2 || "") + (cloudData.part3 || "") + (cloudData.part4 || "");
                         }
                     }
 
@@ -668,11 +808,9 @@
                 // 2. ERROR: Wrong Password
                 } else if (result.status === 'wrong_password') {
                     statusDiv.textContent = "❌ WRONG PASSWORD.";
-                    
                 // 3. ERROR: No Account
                 } else if (result.status === 'user_not_found') {
                     statusDiv.textContent = "WALA KA PANG ACCOUNT, SABIHIN MO KAY LJ CALUCIN!";
-                    
                 // 4. GENERIC ERROR: Any other status from the script
                 } else {
                     statusDiv.textContent = "ERROR: Could not connect to data. Try again.";
@@ -693,7 +831,7 @@
             document.getElementById('password-input').value = '';
             document.getElementById('login-status').textContent = '';
             
-            resetToDefaults(); 
+            resetToDefaults();
         }
 
         function resetToDefaults() {
@@ -705,6 +843,7 @@
             localStorage.removeItem(NOTES_STORAGE_KEY);
             localStorage.removeItem('backgroundImageUrl');
             localStorage.removeItem(PRESET_STORAGE_KEY);
+            cancelAlarm();
         }
 
         // --- 3. UNIVERSAL FORMATTING LOGIC ---
@@ -748,8 +887,6 @@
             }
 
             if (!buttonContainer || !buttonContainer.querySelector('button')) return;
-
-            contentDiv.focus();
             const buttons = buttonContainer.querySelectorAll('button');
 
             buttons.forEach(button => {
@@ -757,10 +894,12 @@
                 if (btnCommand === 'bold' || btnCommand === 'italic' || btnCommand === 'underline') {
                     const isActive = document.queryCommandState(btnCommand);
                     button.classList.toggle('active', isActive);
+  
                 }
                 else if (btnCommand === 'custom-large-text') {
                     const commandValue = document.queryCommandValue('fontSize');
                     const isBig = commandValue === '5'; 
+                
                     button.classList.toggle('active', isBig);
                 }
             });
@@ -772,28 +911,30 @@
             const parentElement = contentDiv.closest('.notepad') || contentDiv.closest('#content-zoom-modal');
             if (parentElement) bringToFront(parentElement);
             contentDiv.focus();
-
             setTimeout(() => {
                 if (command === 'bold' || command === 'italic' || command === 'underline') {
                     document.execCommand(command, false, value);
                 }
                 else if (command === 'custom-large-text') {
-                    const isBig = document.queryCommandValue('fontSize') === '5';
+           
+                     const isBig = document.queryCommandValue('fontSize') === '5';
                     if (isBig) {
                         document.execCommand('fontSize', false, '2'); 
                     } else {
+               
                         document.execCommand('fontSize', false, '5'); 
                     }
                 }
                 updateButtonVisualState(contentDivId);
                 contentDiv.focus();
                 
+    
                 if (contentDivId.startsWith('editor-content-')) {
                     const index = parseInt(contentDivId.replace('editor-content-', ''));
                     updateQuickNote(index, 'text', contentDiv.innerHTML, false); 
                 }
                 if (contentDivId === 'zoom-modal-content-area' && activeZoomNoteIndex !== null) {
-                    updateQuickNote(activeZoomNoteIndex, 'text', contentDiv.innerHTML, false); 
+                    updateQuickNote(activeZoomNoteIndex, 'text', contentDiv.innerHTML, false);
                 }
             }, 0);
         }
@@ -825,6 +966,7 @@
                     const button = document.createElement('button');
                     button.textContent = note.label;
                     button.onclick = () => fillNotepad(contentDivId, note.text);
+            
                     button.setAttribute('data-type', 'quick-note'); 
                     buttonContainer.appendChild(button);
                 });
@@ -848,10 +990,11 @@
                 if (quickNotes[index] && contentDiv) {
                     quickNotes[index].label = labelInput.value;
                     quickNotes[index].text = contentDiv.innerHTML;
+              
                 }
             });
             localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(quickNotes));
-            refreshAllButtons(); 
+            refreshAllButtons();
             const saveBtn = document.getElementById('save-notes-btn');
             const originalText = saveBtn.innerHTML;
             saveBtn.innerHTML = '✅ Applied (Local)';
@@ -891,24 +1034,26 @@
         function populateQuickNotesEditor() {
             const editorContent = document.querySelector('#quick-notes-editor .notepad-content');
             editorContent.innerHTML = '<strong>Button Label</strong><strong style="grid-column: 2 / 4;">Note Content & Actions</strong>';
-            
             quickNotes.forEach((note, index) => {
                 const editorDivId = `editor-content-${index}`;
                 const labelInput = document.createElement('input');
                 labelInput.type = 'text';
                 labelInput.value = note.label;
                 labelInput.addEventListener('blur', (e) => updateQuickNote(index, 'label', e.target.value, false));
+ 
                 labelInput.style.alignSelf = 'stretch'; 
                 labelInput.style.gridColumn = '1 / 2';
                 editorContent.appendChild(labelInput);      
 
                 const contentWrapper = document.createElement('div');
                 contentWrapper.classList.add('content-wrapper');
-                
+     
+            
                 const formatToolbar = document.createElement('div');
                 formatToolbar.classList.add('formatting-row');
                 formatToolbar.innerHTML = `
                     <button data-command="bold" onclick="formatText('${editorDivId}', 'bold')"><b>B</b></button>
+             
                     <button data-command="italic" onclick="formatText('${editorDivId}', 'italic')"><i>I</i></button>
                     <button data-command="underline" onclick="formatText('${editorDivId}', 'underline')"><u>U</u></button>
                     <button data-command="custom-large-text" onclick="formatText('${editorDivId}', 'custom-large-text')">Big Text</button>
@@ -939,15 +1084,13 @@
                 
                 const actionContainer = document.createElement('div');
                 actionContainer.classList.add('icon-container');
-                actionContainer.style.gridColumn = '3 / 4'; 
-                
+                actionContainer.style.gridColumn = '3 / 4';
                 const deleteButton = document.createElement('button');
                 deleteButton.classList.add('delete-note-btn');
                 deleteButton.textContent = '🗑️';
                 deleteButton.onclick = () => deleteQuickNote(index);
                 actionContainer.appendChild(deleteButton);
-                editorContent.appendChild(actionContainer);  
-                
+                editorContent.appendChild(actionContainer);
                 setTimeout(() => {
                     contentDiv.focus();
                     document.execCommand('defaultParagraphSeparator', false, 'br');
@@ -961,9 +1104,9 @@
             if (editor.style.display === 'grid') {
                 editor.style.display = 'none';
             } else {
-                const editorWidth = 800; 
+                const editorWidth = 800;
                 let newLeft = Math.max(0, (window.innerWidth / 2) - (editorWidth / 2)); 
-                let newTop = CONTROL_BAR_HEIGHT + 50; 
+                let newTop = CONTROL_BAR_HEIGHT + 50;
                 editor.style.width = editorWidth + 'px';
                 editor.style.height = 500 + 'px';
                 editor.style.left = newLeft + 'px';
@@ -992,7 +1135,7 @@
             const mainEditorContentDiv = document.getElementById(`editor-content-${index}`);
             if (mainEditorContentDiv) {
                  modalContentArea.onblur = () => {
-                    updateQuickNote(index, 'text', modalContentArea.innerHTML, false); 
+                    updateQuickNote(index, 'text', modalContentArea.innerHTML, false);
                     mainEditorContentDiv.innerHTML = modalContentArea.innerHTML;
                 };
             }
@@ -1006,7 +1149,7 @@
             const modal = document.getElementById('content-zoom-modal');
             const modalContentArea = document.getElementById('zoom-modal-content-area');
             if (activeZoomNoteIndex !== null) {
-                updateQuickNote(activeZoomNoteIndex, 'text', modalContentArea.innerHTML, false); 
+                updateQuickNote(activeZoomNoteIndex, 'text', modalContentArea.innerHTML, false);
                 const mainEditorContentDiv = document.getElementById(`editor-content-${activeZoomNoteIndex}`);
                 if (mainEditorContentDiv) mainEditorContentDiv.innerHTML = modalContentArea.innerHTML;
             }
@@ -1052,29 +1195,29 @@
                 const contentDiv = notepad.querySelector('.rich-text-content');
                 layoutData.push({
                     id: notepad.id,
+                 
                     top: notepad.style.top,
                     left: notepad.style.left,
                     width: notepad.style.width,
                     height: notepad.style.height,
                     title: notepad.querySelector('.notepad-title').textContent,
+            
                     isQuickNotesPad: notepad.hasAttribute('data-quick-notes'),
                     isLocked: notepad.classList.contains('locked'),
                     content: contentDiv ? contentDiv.innerHTML : '' 
                 });
             });
-
             // Package layout, quickNotes, and background
             const fullUserData = {
                 layout: layoutData,
                 quickNotes: quickNotes,
-                background: localStorage.getItem('backgroundImageUrl') || ''
+                background: localStorage.getItem('backgroundImageUrl') ||
+                ''
             };
 
             const jsonString = JSON.stringify(fullUserData);
-
             // 1. Save to local storage (backup)
             localStorage.setItem(PRESET_STORAGE_KEY, jsonString);
-
             // 2. Save to Google Sheets (Cloud) - Split into 4 parts
             const saveBtn = document.getElementById('save-preset-btn');
             saveBtn.textContent = "⏳ Saving...";
@@ -1085,28 +1228,31 @@
             const p2 = jsonString.substring(CHUNK_SIZE, CHUNK_SIZE * 2);
             const p3 = jsonString.substring(CHUNK_SIZE * 2, CHUNK_SIZE * 3);
             const p4 = jsonString.substring(CHUNK_SIZE * 3, CHUNK_SIZE * 4);
-
             fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
                 body: JSON.stringify({ 
                     username: currentUser, 
                     password: currentPassword, 
+                    
                     part1: p1, 
                     part2: p2, 
                     part3: p3, 
                     part4: p4 
                 })
             })
+    
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'error') {
                     alert("Save Failed: " + data.message);
                     saveBtn.textContent = "❌ Error";
+         
                 } else {
                     saveBtn.textContent = "✅ Saved Everything!";
                     setTimeout(() => { saveBtn.textContent = "(Cloud)"; }, 2000);
                 }
             })
+            
             .catch(err => {
                 console.error(err);
                 alert("Error saving to cloud. Check console.");
@@ -1126,7 +1272,8 @@
                 if (Array.isArray(parsedData)) {
                     layoutData = parsedData;
                 } else {
-                    layoutData = parsedData.layout || [];
+                    layoutData = parsedData.layout ||
+                    [];
                     
                     // Restore Quick Notes
                     if (parsedData.quickNotes) {
@@ -1145,7 +1292,7 @@
                 }
 
                 // Restore Layout
-                let maxId = 2; 
+                let maxId = 2;
                 layoutData.forEach(data => {
                     const match = data.id.match(/note(\d+)/);
                     if (match) maxId = Math.max(maxId, parseInt(match[1]));
@@ -1171,17 +1318,19 @@
             if (data.isQuickNotesPad) newNotepad.setAttribute('data-quick-notes', 'true');
 
             const contentDivId = `text-${data.id}`;
-            const lockEmoji = data.isLocked ? '🔓' : '🔒'; 
+            const lockEmoji = data.isLocked ? '🔓' : '🔒';
             let innerHTML = `
                 <div class="notepad-header">
                     <span class="notepad-title" data-draggable-handle="true">${data.title}</span>
                     <button class="lock-btn" onclick="toggleLock('${data.id}')">${lockEmoji}</button>
                     <button class="close-btn" onclick="deleteNotepad('${data.id}')">X</button>
+              
                 </div>
                 <div class="notepad-content">
                     <div class="button-group" id="formatting-buttons-${data.id}">
                         <button data-command="bold" onclick="formatText('${contentDivId}', 'bold')"><b>B</b></button>
                         <button data-command="italic" onclick="formatText('${contentDivId}', 'italic')"><i>I</i></button>
+     
                         <button data-command="underline" onclick="formatText('${contentDivId}', 'underline')"><u>U</u></button>
                         <button data-command="custom-large-text" onclick="formatText('${contentDivId}', 'custom-large-text')">Big Text</button>
                     </div>`;
@@ -1192,14 +1341,12 @@
             document.body.appendChild(newNotepad);
             makeDraggable(newNotepad);
             makeTitleEditable(newNotepad);
-
             const contentDiv = document.getElementById(contentDivId);
             contentDiv.addEventListener('mouseup', () => updateButtonVisualState(contentDivId));
             contentDiv.addEventListener('keyup', () => updateButtonVisualState(contentDivId));
             contentDiv.addEventListener('click', () => updateButtonVisualState(contentDivId));
             contentDiv.addEventListener('paste', handlePaste); 
-            contentDiv.addEventListener('copy', handleCopy); 
-            
+            contentDiv.addEventListener('copy', handleCopy);
             // Apply formatting fix on load
             contentDiv.focus();
             document.execCommand('defaultParagraphSeparator', false, 'br');
@@ -1223,13 +1370,15 @@
                 const currentWidth = element.offsetWidth;
                 const maxWidth = window.innerWidth - element.offsetLeft - SCROLLBAR_WIDTH; 
                 if (currentWidth > maxWidth) element.style.width = maxWidth + 'px';
+       
             }).observe(element);
             
             function dragMouseDown(e) {
-                if (element.classList.contains('locked')) return; 
+                if (element.classList.contains('locked')) return;
                 e = e || window.event;
                 if (e.target.closest('button') || e.target.classList.contains('zoom-btn') || (e.target.hasAttribute('contenteditable') && e.target.getAttribute('contenteditable') === 'true')) {
-                    bringToFront(element); return;
+                    bringToFront(element);
+                    return;
                 }
                 e.preventDefault();
                 bringToFront(element);
@@ -1238,27 +1387,29 @@
                 document.onmousemove = elementDrag;
             }
             function elementDrag(e) {
-                if (element.classList.contains('locked')) return; 
+                if (element.classList.contains('locked')) return;
                 e = e || window.event;
                 e.preventDefault();
                 pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
-                pos3 = e.clientX; pos4 = e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
                 let newTop = element.offsetTop - pos2;
                 let newLeft = element.offsetLeft - pos1;
-                newTop = Math.max(CONTROL_BAR_HEIGHT, newTop); 
+                newTop = Math.max(CONTROL_BAR_HEIGHT, newTop);
                 newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - element.offsetWidth - SCROLLBAR_WIDTH));
                 element.style.top = newTop + "px";
                 element.style.left = newLeft + "px";
             }
-            function closeDragElement() { document.onmouseup = null; document.onmousemove = null; }
+            function closeDragElement() { document.onmouseup = null;
+                document.onmousemove = null; }
             
             if (dragHandle) dragHandle.onmousedown = dragMouseDown;
             element.addEventListener('click', (e) => {
                 if (!e.target.closest('button') && !e.target.closest('.notepad-header')) bringToFront(element);
             });
-            
             element.enableDrag = () => { dragHandle.onmousedown = dragMouseDown; element.style.resize = 'both'; };
-            element.disableDrag = () => { dragHandle.onmousedown = null; element.style.resize = 'none'; };
+            element.disableDrag = () => { dragHandle.onmousedown = null;
+                element.style.resize = 'none'; };
             
             if (element.classList.contains('locked')) element.disableDrag(); else element.enableDrag();
         }
@@ -1295,11 +1446,13 @@
                     <span class="notepad-title" data-draggable-handle="true">${headerTitle}</span>
                     <button class="lock-btn" onclick="toggleLock('${noteId}')">🔒</button>
                     <button class="close-btn" onclick="deleteNotepad('${noteId}')">X</button>
+         
                 </div>
                 <div class="notepad-content">
                     <div class="button-group" id="formatting-buttons-${noteId}">
                         <button data-command="bold" onclick="formatText('${contentDivId}', 'bold')"><b>B</b></button>
-                        <button data-command="italic" onclick="formatText('${contentDivId}', 'italic')"><i>I</i></button>
+                        <button data-command="italic" onclick="formatText('${contentDivId}', 
+                            'italic')"><i>I</i></button>
                         <button data-command="underline" onclick="formatText('${contentDivId}', 'underline')"><u>U</u></button>
                         <button data-command="custom-large-text" onclick="formatText('${contentDivId}', 'custom-large-text')">Big Text</button>
                     </div>`;
@@ -1310,7 +1463,6 @@
             document.body.appendChild(newNotepad);
             makeDraggable(newNotepad);
             makeTitleEditable(newNotepad);
-            
             const contentDiv = document.getElementById(contentDivId);
             contentDiv.focus();
             document.execCommand('defaultParagraphSeparator', false, 'br');
@@ -1342,12 +1494,117 @@
                 if (e.key === 'Enter') { e.preventDefault(); titleSpan.blur(); }
             });
         }
+        
+        // --- CLOCK FUNCTION ---
+        function startPhilippineClock() {
+            const clockElement = document.getElementById('ph-clock');
+            function update() {
+                const now = new Date();
+                const options = { 
+                    timeZone: 'Asia/Manila', 
+                    hour12: true, 
+                    hour: 'numeric', 
+                    minute: '2-digit', 
+                    second: '2-digit' 
+                };
+                clockElement.textContent = "🇵🇭 " + now.toLocaleTimeString('en-US', options);
+            }
+            update();
+            setInterval(update, 1000);
+        }
+
+        // --- ALARM FUNCTIONS ---
+        function toggleAlarmMenu() {
+            const dropdown = document.getElementById('alarm-dropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('#alarm-btn') && !event.target.closest('#alarm-dropdown')) {
+                document.getElementById('alarm-dropdown').style.display = 'none';
+            }
+        }
+
+        function setAlarm(minutes) {
+            cancelAlarm(); // Clear existing
+            
+            const now = new Date();
+            alarmTargetTime = new Date(now.getTime() + minutes * 60000);
+            
+            // Set Timer
+            alarmTimeoutId = setTimeout(triggerAlarm, minutes * 60000);
+
+            // Update UI
+            document.getElementById('alarm-dropdown').style.display = 'none';
+            document.getElementById('cancel-alarm-btn').style.display = 'block';
+            
+            const btn = document.getElementById('alarm-btn');
+            btn.style.backgroundColor = '#ffcc00';
+            btn.style.color = '#000';
+            
+            // Start Interval to update status text inside button
+            updateAlarmStatus();
+            alarmIntervalId = setInterval(updateAlarmStatus, 1000);
+        }
+
+        function updateAlarmStatus() {
+            if (!alarmTargetTime) return;
+            const now = new Date();
+            const diff = alarmTargetTime - now;
+            
+            const btn = document.getElementById('alarm-btn');
+            
+            if (diff <= 0) {
+                // Should trigger, but reset text just in case
+                btn.textContent = "⏰";
+                return;
+            }
+
+            const minutesLeft = Math.ceil(diff / 60000);
+            // Replaces "⏰" with "🔔 14m"
+            btn.textContent = `🔔 ${minutesLeft}m`;
+        }
+
+        function cancelAlarm() {
+            if (alarmTimeoutId) clearTimeout(alarmTimeoutId);
+            if (alarmIntervalId) clearInterval(alarmIntervalId);
+            alarmTimeoutId = null;
+            alarmIntervalId = null;
+            alarmTargetTime = null;
+            
+            const btn = document.getElementById('alarm-btn');
+            btn.textContent = "⏰"; // Reset icon
+            btn.style.backgroundColor = ''; // Reset colors
+            btn.style.color = '';
+            
+            document.getElementById('cancel-alarm-btn').style.display = 'none';
+            document.getElementById('alarm-dropdown').style.display = 'none';
+        }
+
+        function triggerAlarm() {
+            document.getElementById('alarm-ringing-modal').style.display = 'flex';
+            try { alarmSound.play(); } catch(e) { console.log("Audio blocked"); }
+            cancelAlarm(); // Reset timer logic, but modal stays open
+        }
+
+        function stopAlarm() {
+            document.getElementById('alarm-ringing-modal').style.display = 'none';
+            alarmSound.pause();
+            alarmSound.currentTime = 0;
+        }
+
+        function snoozeAlarm() {
+            stopAlarm();
+            setAlarm(10); // Snooze for 10 mins
+        }
 
         function initialize() {
-            CONTROL_BAR_HEIGHT = document.getElementById('controls').offsetHeight + 2; 
+            CONTROL_BAR_HEIGHT = document.getElementById('controls').offsetHeight + 2;
             document.documentElement.style.setProperty('--control-height', `${CONTROL_BAR_HEIGHT}px`);
             loadQuickNotes(); // Loads from local storage (for guest/session)
             loadBackgroundImage();
+            startPhilippineClock(); 
             
             // Show login modal on start
             document.getElementById('login-overlay').style.display = 'flex';
