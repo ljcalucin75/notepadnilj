@@ -112,12 +112,13 @@
             display: flex;
             gap: 8px;
             margin-bottom: 10px;
-            flex-wrap: wrap;
+            /* flex-wrap: wrap; REMOVED to keep buttons on one row */
             align-items: center;
             backdrop-filter: blur(8px); 
             -webkit-backdrop-filter: blur(8px);
             background-color: rgba(255, 255, 255, 0.2);
-            overflow: visible; 
+            overflow-x: auto; /* ADDED to allow horizontal scrolling */
+            overflow-y: hidden; /* ADDED to keep a clean look */
         }
         
         #toolbar-bg-mirror {
@@ -278,6 +279,114 @@
         .alarm-buttons { display: flex; gap: 20px; justify-content: center; margin-top: 20px; }
         .btn-stop { background-color: #d9534f !important; padding: 15px 30px !important; font-size: 1.2em !important; }
         .btn-snooze { background-color: #0275d8 !important; padding: 15px 30px !important; font-size: 1.2em !important; }
+
+        /* --- NEW CHAT MODAL STYLES --- */
+        #chat-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.7); 
+            z-index: 20002; 
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #chat-window {
+            background-color: white;
+            width: 400px;
+            height: 600px;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            max-width: 90%;
+            max-height: 90%;
+        }
+        #chat-header {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1em;
+        }
+        #chat-header button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        #chat-messages {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: #f7f9fb;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-message {
+            margin-bottom: 8px;
+            padding: 6px 10px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+            font-size: 0.9em;
+        }
+        .incoming {
+            background-color: #e2e6ea;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+        .outgoing {
+            background-color: #28a745;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+        .chat-message strong {
+            font-weight: bold;
+            margin-right: 5px;
+            display: block;
+            font-size: 0.8em;
+            color: rgba(0, 0, 0, 0.6);
+            margin-bottom: 2px;
+        }
+        .outgoing strong {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        #chat-input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            background-color: white;
+        }
+        #chat-input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            margin-right: 10px;
+            font-size: 1em;
+            outline: none;
+        }
+        #send-chat-btn {
+            background-color: #007bff !important; /* Changed from green to blue */
+            color: white;
+            border-radius: 20px !important;
+            padding: 8px 15px !important;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
 
         /* --- Notepad Base Styles --- */
@@ -650,9 +759,7 @@
         <button id="create-quick-btn" onclick="createNewNotepad(true)">📝 Create w/ Quick Notes</button>
 
         <button id="edit-quick-notes-btn" onclick="toggleQuickNotesEditor()">✏️ Edit Quick Notes</button>
-  
-        
-        <button id="save-preset-btn" onclick="saveNotepadPreset()" style="">💾 Save Preset (Cloud)</button>
+        <button id="chat-btn" onclick="openChat()">💬 Chat</button> <button id="save-preset-btn" onclick="saveNotepadPreset()" style="">💾 Save Preset (Cloud)</button>
 
         <div class="image-control">
             <input type="url" id="bg-url" placeholder="Paste image URL" size="20">
@@ -691,6 +798,20 @@
         </div>
     </div>
 
+    <div id="chat-modal">
+        <div id="chat-window">
+            <div id="chat-header">
+                Team Chat
+                <button onclick="closeChat()">X</button>
+            </div>
+            <div id="chat-messages">
+                </div>
+            <div id="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+                <button id="send-chat-btn" onclick="sendChatMessage()">Send</button>
+            </div>
+        </div>
+    </div>
     <div id="quick-notes-editor" class="notepad" style="display: none;">
         <div class="notepad-header">
             <span class="notepad-title" data-draggable-handle="true">Quick Notes Editor</span>
@@ -740,6 +861,7 @@
         let internalClipboardHTML = null;
         let currentUser = null;
         let currentPassword = null; 
+        let chatPollIntervalId = null;
 
         // Alarm Variables
         let alarmTimeoutId = null;
@@ -761,6 +883,117 @@
         ];
         let quickNotes = JSON.parse(JSON.stringify(DEFAULT_QUICK_NOTES));
 
+        // --- NEW CHAT FUNCTIONS ---
+        function appendMessage(sender, message, isOutgoing) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageEl = document.createElement('div');
+            messageEl.classList.add('chat-message');
+            messageEl.classList.add(isOutgoing ? 'outgoing' : 'incoming');
+            
+            const senderSpan = document.createElement('strong');
+            senderSpan.textContent = sender;
+            
+            const textNode = document.createTextNode(message);
+            
+            messageEl.appendChild(senderSpan);
+            messageEl.appendChild(textNode);
+            messagesDiv.appendChild(messageEl);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function openChat() {
+            if (!currentUser) {
+                alert("Please log in to use the Team Chat feature.");
+                return;
+            }
+            document.getElementById('chat-modal').style.display = 'flex';
+            document.getElementById('chat-input').focus();
+            fetchChatHistory();
+            // Start polling for new messages every 5 seconds
+            chatPollIntervalId = setInterval(fetchChatHistory, 5000); 
+        }
+        
+        function closeChat() {
+            document.getElementById('chat-modal').style.display = 'none';
+            if (chatPollIntervalId) {
+                clearInterval(chatPollIntervalId);
+                chatPollIntervalId = null;
+            }
+        }
+        
+        async function fetchChatHistory() {
+            const messagesDiv = document.getElementById('chat-messages');
+            const wasScrolledToBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop <= messagesDiv.clientHeight + 10;
+            
+            try {
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=chat_history&username=${encodeURIComponent(currentUser)}&password=${encodeURIComponent(currentPassword)}`);
+                const result = await response.json();
+
+                if (result.status === 'success' && Array.isArray(result.data)) {
+                    // Clear and rebuild chat history
+                    messagesDiv.innerHTML = ''; 
+                    result.data.forEach(msg => {
+                        const sender = msg.sender || 'System';
+                        const message = msg.message || 'No Content';
+                        const isOutgoing = sender.toLowerCase() === currentUser.toLowerCase();
+                        appendMessage(sender, message, isOutgoing);
+                    });
+                    if (wasScrolledToBottom) {
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    }
+
+                } else if (result.status === 'error' && result.message === 'user_not_found') {
+                    // This could happen if session expires, just log it.
+                    console.error("Chat history fetch failed: User not logged in.");
+                }
+
+            } catch (e) {
+                console.error("Error fetching chat history:", e);
+                // Optionally show error in chat window
+            }
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message || !currentUser) return;
+            
+            input.disabled = true;
+            const sendBtn = document.getElementById('send-chat-btn');
+            sendBtn.textContent = 'Sending...';
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ 
+                        action: "chat_send",
+                        username: currentUser, 
+                        password: currentPassword, 
+                        message: message
+                    })
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    // Add message locally and refresh history
+                    // We call fetchChatHistory to ensure consistency and display messages from others.
+                    input.value = '';
+                    fetchChatHistory();
+                } else {
+                    alert("Failed to send message: " + (result.message || 'Unknown error'));
+                    appendMessage('System', 'Failed to send message.', false);
+                }
+            } catch (e) {
+                console.error("Error sending chat message:", e);
+                alert("Network Error: Could not reach chat server.");
+                appendMessage('System', 'Network error. Message not sent.', false);
+            } finally {
+                input.disabled = false;
+                sendBtn.textContent = 'Send';
+                input.focus();
+            }
+        }
+
         // --- 2. LOGIN / LOGOUT LOGIC ---
         
         async function loginUser() {
@@ -776,7 +1009,8 @@
 
             statusDiv.textContent = "Connecting...";
             try {
-                const response = await fetch(`${GOOGLE_SCRIPT_URL}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+                // ADDED action to login fetch
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
                 const result = await response.json();
 
                 // 1. SUCCESS: Only 'found' grants access
@@ -832,6 +1066,7 @@
             document.getElementById('login-status').textContent = '';
             
             resetToDefaults();
+            closeChat(); // Close chat on logout
         }
 
         function resetToDefaults() {
@@ -1231,6 +1466,7 @@
             fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
                 body: JSON.stringify({ 
+                    action: "save_preset", // ADDED action for clarity
                     username: currentUser, 
                     password: currentPassword, 
                     
@@ -1357,7 +1593,7 @@
 
         // --- 8. DRAG, DROP, RENAME & DELETE LOGIC ---
         function bringToFront(element) {
-            if (element.id !== 'content-zoom-modal') element.style.zIndex = ++zIndexCounter;
+            if (element.id !== 'content-zoom-modal' && element.id !== 'chat-modal') element.style.zIndex = ++zIndexCounter;
             else element.style.zIndex = 9999; 
         }
         
@@ -1521,7 +1757,7 @@
 
         // Close dropdown when clicking outside
         window.onclick = function(event) {
-            if (!event.target.matches('#alarm-btn') && !event.target.closest('#alarm-dropdown')) {
+            if (!event.target.matches('#alarm-btn') && !event.target.closest('#alarm-dropdown') && !event.target.closest('#chat-modal')) {
                 document.getElementById('alarm-dropdown').style.display = 'none';
             }
         }
