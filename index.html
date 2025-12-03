@@ -10,7 +10,7 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Updated Font for sleekness */
             margin: 0;
             padding: 0;
             background-color: #5C5C5C;
@@ -146,13 +146,42 @@
             font-weight: bold;
             font-size: 13px;
             cursor: pointer;
-            transition: background-color 0.2s, color 0.2s; 
+            transition: background-color 0.2s, color 0.2s, filter 0.2s; 
             white-space: nowrap;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            position: relative; /* IMPORTANT for notification badge */
         }
         
         #controls button:hover {
             background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* --- NEW CHAT BUTTON STYLING --- */
+        #chat-btn {
+            background: linear-gradient(135deg, #007bff, #0056b3) !important;
+            color: white !important;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4) !important;
+        }
+        #chat-btn:hover {
+            filter: brightness(1.1);
+        }
+        
+        /* --- CHAT NOTIFICATION BADGE --- */
+        #chat-notification-badge {
+            position: absolute; 
+            top: -4px; 
+            right: -4px; 
+            width: 12px; 
+            height: 12px; 
+            background-color: #dc3545; /* Red */
+            border-radius: 50%;
+            border: 2px solid white; /* For visibility against dark backgrounds */
+            animation: pulse 1.5s infinite; /* Gentle pulsing effect */
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.8; }
         }
 
         #save-preset-btn {
@@ -209,43 +238,110 @@
             align-items: center;
         }
 
-        /* --- UPDATED ALARM BUTTON --- */
         #alarm-btn {
             width: 80px;
             text-align: center;
         }
 
-        #alarm-dropdown {
-            display: none;
-            position: absolute;
-            top: 110%;
-            right: 0;
-            background-color: white;
-            min-width: 120px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            border-radius: 4px;
-            z-index: 20000;
-            overflow: hidden;
-        }
-
-        #alarm-dropdown button {
-            color: black !important;
-            background-color: white !important;
-            padding: 10px 16px !important;
-            text-decoration: none;
-            display: block;
+        /* --- NEW ALARM SETUP MODAL STYLES --- */
+        #alarm-setup-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            text-align: left;
-            border-radius: 0 !important;
-            border-bottom: 1px solid #eee !important;
-            box-shadow: none !important;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 20005; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
         }
 
-        #alarm-dropdown button:hover {
-            background-color: #f1f1f1 !important;
+        .alarm-setup-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 320px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            font-family: Arial, sans-serif;
         }
+
+        .alarm-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .alarm-tabs button {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #888;
+            border-bottom: 3px solid transparent;
+        }
+
+        .alarm-tabs button.active {
+            color: #007bff;
+            border-bottom: 3px solid #007bff;
+        }
+
+        .timer-presets {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .timer-presets button {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .timer-presets button.selected {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+        }
+
+        .alarm-view input[type="text"], 
+        .alarm-view input[type="number"],
+        .alarm-view input[type="time"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .alarm-setup-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .alarm-setup-actions button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .alarm-setup-actions .cancel-btn { background: #ccc; color: #333; }
+        .alarm-setup-actions .set-btn { background: #28a745; color: white; }
+        .alarm-setup-actions .set-btn:hover { background: #218838; }
         
-        /* --- ALARM RINGING MODAL --- */
+        /* --- MODERN ALARM RINGING MODAL STYLES (UPDATED) --- */
         #alarm-ringing-modal {
             display: none;
             position: fixed;
@@ -253,65 +349,150 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0,0,0,0.8);
-            z-index: 20001;
+            background: rgba(0,0,0,0.85); /* Slightly darker for focus */
+            z-index: 20010;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s ease-out;
         }
-        .alarm-content {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 0 50px rgba(255, 0, 0, 0.5);
-            animation: pulse-red 1s infinite;
-        }
-        @keyframes pulse-red {
-            0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-            }
-            50% { box-shadow: 0 0 60px rgba(255, 0, 0, 0.8);
-            }
-            100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-            }
-        }
-        .alarm-content h1 { margin: 0 0 20px 0;
-            color: #d9534f; font-size: 3em; }
-        .alarm-buttons { display: flex; gap: 20px; justify-content: center;
-            margin-top: 20px; }
-        .btn-stop { background-color: #d9534f !important; padding: 15px 30px !important;
-            font-size: 1.2em !important; }
-        .btn-snooze { background-color: #0275d8 !important; padding: 15px 30px !important;
-            font-size: 1.2em !important; }
 
-        /* --- NEW CHAT MODAL STYLES --- */
-        #chat-modal {
-            display: none;
-            position: fixed;
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .alarm-content {
+            background: linear-gradient(145deg, #222, #333); /* sleek dark gradient */
+            padding: 40px;
+            border-radius: 20px; /* softer corners */
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            width: 350px;
+            max-width: 90%;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            overflow: hidden;
+        }
+
+        /* Top Accent Line */
+        .alarm-content::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.7); 
-            z-index: 20002; 
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #ff8a00, #ff0055);
         }
+
+        .alarm-icon-animation {
+            font-size: 50px;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: ring-bell 1s infinite ease-in-out;
+        }
+
+        @keyframes ring-bell {
+            0% { transform: rotate(0); }
+            10% { transform: rotate(15deg); }
+            30% { transform: rotate(-15deg); }
+            50% { transform: rotate(0); }
+            100% { transform: rotate(0); }
+        }
+
+        .alarm-content h1 { 
+            margin: 0 0 10px 0;
+            font-size: 2em; 
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+        
+        #ringing-message {
+            font-size: 1.1em;
+            color: #ccc;
+            margin-bottom: 30px;
+            line-height: 1.4;
+            font-weight: 300;
+        }
+
+        .alarm-buttons { 
+            display: flex; 
+            gap: 15px; 
+            justify-content: center; 
+        }
+
+        .alarm-btn-action {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px; /* Pill shape */
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 100px;
+        }
+        
+        .alarm-btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-snooze { 
+            background-color: #444; 
+            color: #fff; 
+            border: 1px solid #555;
+        }
+        .btn-snooze:hover { background-color: #555; }
+
+        .btn-stop { 
+            background: linear-gradient(135deg, #ff8a00, #ff0055); 
+            color: white; 
+            box-shadow: 0 4px 15px rgba(255, 0, 85, 0.4);
+        }
+        .btn-stop:hover { filter: brightness(1.1); }
+
+        /* --- NEW CHAT MODAL STYLES (UPDATED FOR SLIDE/DRAG) --- */
+        #chat-modal {
+            display: none;
+            position: fixed; /* Default: Fixed for slide up from bottom-right */
+            bottom: -650px; /* Start position below the screen */
+            right: 20px;
+            width: 400px; /* Fixed dimensions for fixed mode */
+            height: 600px; 
+            max-width: calc(100vw - 40px);
+            max-height: calc(100vh - 40px - var(--control-height));
+            background-color: transparent; /* Container is transparent */
+            z-index: 20002; 
+            padding: 0;
+            box-sizing: border-box;
+            transition: bottom 0.3s ease-out; /* Smooth slide transition */
+        }
+        
+        /* State when dragged/floating */
+        #chat-modal.floating {
+            position: absolute; /* Switched to absolute when dragged */
+            transition: none; /* Disable transition in floating mode */
+            right: auto;
+            bottom: auto;
+        }
+
         #chat-window {
             background-color: white;
-            width: 400px;
-            height: 600px;
+            width: 100%; /* Fill the container */
+            height: 100%;
             border-radius: 10px;
             box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            max-width: 90%;
-            max-height: 90%;
+            max-width: 100%;
+            max-height: 100%;
         }
+
         #chat-header {
             padding: 10px;
             background-color: #007bff;
@@ -321,6 +502,10 @@
             justify-content: space-between;
             align-items: center;
             font-size: 1.1em;
+            cursor: grab; /* Grab cursor for dragging */
+        }
+        #chat-header:active {
+            cursor: grabbing;
         }
         #chat-header button {
             background: none;
@@ -347,17 +532,34 @@
             word-wrap: break-word;
             font-size: 0.9em;
         }
+        
+        /* Default Incoming Message (Other users) */
         .incoming {
             background-color: #e2e6ea;
             align-self: flex-start;
             border-bottom-left-radius: 2px;
         }
+        
+        /* Outgoing Message (Current user) */
         .outgoing {
             background-color: #28a745;
             color: white;
             align-self: flex-end;
             border-bottom-right-radius: 2px;
         }
+        
+        /* !!! NEW: SYSTEM/ADMIN MESSAGE STYLES !!! */
+        .system-message {
+            background-color: #e9f7ff; /* Light blue background */
+            border: 1px solid #007bff; /* Primary blue border */
+            color: #333;
+            align-self: flex-start; /* Stays on the left */
+            padding: 8px 12px;
+            border-radius: 18px 18px 18px 2px; /* Unique shape */
+            max-width: 90%; /* Slightly wider for importance */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
         .chat-message strong {
             font-weight: bold;
             margin-right: 5px;
@@ -369,6 +571,19 @@
         .outgoing strong {
             color: rgba(255, 255, 255, 0.8);
         }
+        
+        /* System/Admin Specific strong tag */
+        .system-message strong {
+            color: #0056b3 !important; /* Darker blue for sender name */
+            font-size: 0.9em !important;
+            font-weight: 700; /* Bolder sender name */
+            border-bottom: 1px solid #b3d9ff; /* Subtle line under the name */
+            padding-bottom: 2px;
+            margin-bottom: 3px;
+        }
+        
+        /* --- END SYSTEM MESSAGE STYLES --- */
+        
         #chat-input-area {
             display: flex;
             padding: 10px;
@@ -840,7 +1055,13 @@
         <button id="create-quick-btn" onclick="createNewNotepad(true)">📝 Create w/ Quick Notes</button>
 
         <button id="edit-quick-notes-btn" onclick="toggleQuickNotesEditor()">✏️ Edit Quick Notes</button>
-        <button id="chat-btn" onclick="openChat()">💬 Chat</button> <button id="save-preset-btn" onclick="saveNotepadPreset()" style="">💾 Save Preset (Cloud)</button>
+        
+        <button id="chat-btn" onclick="openChat()">
+            💬 Chat
+            <span id="chat-notification-badge" style="display:none;"></span>
+        </button> 
+        
+        <button id="save-preset-btn" onclick="saveNotepadPreset()" style="">💾 Save Preset (Cloud)</button>
 
         <div class="image-control">
             <input type="url" id="bg-url" placeholder="Paste image URL" size="20">
@@ -853,14 +1074,7 @@
             <div id="ph-clock">Loading Time...</div>
             
             <div id="alarm-wrapper">
-                <button id="alarm-btn" onclick="toggleAlarmMenu()">⏰</button>
-                <div id="alarm-dropdown">
-                    <button onclick="setAlarm(15)">15 Minutes</button>
-         
-                    <button onclick="setAlarm(30)">30 Minutes</button>
-                    <button onclick="setAlarm(60)">1 Hour</button>
-                    <button id="cancel-alarm-btn" onclick="cancelAlarm()" style="color:red !important; display:none;">Cancel Alarm</button>
-                </div>
+                <button id="alarm-btn" onclick="openAlarmModal()">⏰</button>
             </div>
         </div>
 
@@ -872,16 +1086,17 @@
     
     <div id="alarm-ringing-modal">
         <div class="alarm-content">
-            <h1>⏰ WAKE UP! ⏰</h1>
-            <p style="font-size: 1.5em; color: #333;">Your timer is done!</p>
+            <div class="alarm-icon-animation">🔔</div>
+            <h1>TIME'S UP!</h1>
+            <p id="ringing-message">Your timer is done!</p>
             <div class="alarm-buttons">
-                <button class="btn-snooze" onclick="snoozeAlarm()">💤 Snooze (10m)</button>
-                <button class="btn-stop" onclick="stopAlarm()">🛑 STOP</button>
+                <button class="alarm-btn-action btn-snooze" onclick="snoozeAlarm()">💤 Snooze</button>
+                <button class="alarm-btn-action btn-stop" onclick="stopAlarm()">🛑 STOP</button>
             </div>
         </div>
     </div>
 
-    <div id="chat-modal">
+    <div id="chat-modal" style="display: none;">
         <div id="chat-window">
       
             <div id="chat-header">
@@ -934,13 +1149,58 @@
         </div>
     </div>
 
+    <div id="alarm-setup-modal" style="display:none;">
+        <div class="alarm-setup-content">
+            <div class="alarm-tabs">
+                <button id="tab-timer" class="active" onclick="switchAlarmTab('timer')">⏳ Timer</button>
+                <button id="tab-alarm" onclick="switchAlarmTab('alarm')">⏰ Alarm (PH)</button>
+            </div>
+
+            <div id="view-timer" class="alarm-view">
+                <p>Select Duration:</p>
+                <div class="timer-presets">
+                    <button onclick="selectTimerPreset(15, this)">15m</button>
+                    <button onclick="selectTimerPreset(30, this)">30m</button>
+                    <button onclick="selectTimerPreset(60, this)">60m</button>
+                </div>
+                <div style="margin-top: 10px;">
+                    <label>Or Custom (mins):</label>
+                    <input type="number" id="custom-timer-mins" placeholder="0" oninput="clearTimerPresets()">
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>Message when done:</label>
+                    <input type="text" id="timer-label" placeholder="e.g. Time's Up!">
+                </div>
+            </div>
+
+            <div id="view-alarm" class="alarm-view" style="display:none;">
+                <p>Set Time (Philippines):</p>
+                <input type="time" id="alarm-time-input">
+                <div style="margin-top: 15px;">
+                    <label>Message when done:</label>
+                    <input type="text" id="alarm-label" placeholder="e.g. Break is over!">
+                </div>
+            </div>
+
+            <div class="alarm-setup-actions">
+                <button class="cancel-btn" onclick="closeAlarmModal()">Cancel</button>
+                <button class="set-btn" onclick="confirmAlarmSet()">SET</button>
+            </div>
+            
+            <div id="active-alarm-controls" style="display:none; margin-top:15px; border-top:1px solid #ccc; padding-top:10px;">
+                <p style="color:green; font-weight:bold;" id="active-alarm-status-text"></p>
+                <button onclick="cancelAlarm()" style="background: #dc3545; color: white; width: 100%;">Cancel Current Alarm</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- 1. GLOBAL VARIABLES & INITIAL SETUP ---
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvdYP2SVZ_OWKeFGeaFOiRN_fOk68JVSQq0aPQNgospQszkwl2jCBlwiDT2Fr-kbXo0g/exec";
         let zIndexCounter = 1000;
         let notepadCounter = 2;
         let activeZoomNoteIndex = null;
-        let draggedItemIndex = null; // Drag & Drop variable
+        let draggedItemIndex = null; 
         const NOTES_STORAGE_KEY = 'quickNotesList';
         const PRESET_STORAGE_KEY = 'notepadLayoutPreset';
         let CONTROL_BAR_HEIGHT = 80; 
@@ -948,10 +1208,17 @@
         const SCROLLBAR_WIDTH = 17;
         
         let internalClipboardHTML = null;
-        let lastInternalCopyTime = 0; // Track time of last internal copy
+        let lastInternalCopyTime = 0; 
         let currentUser = null;
         let currentPassword = null; 
-        let chatPollIntervalId = null;
+
+        // NEW CHAT VARIABLES
+        let chatPollIntervalId = null; // ID for the fast 5s poll when chat is open
+        let backgroundChatPollId = null; // NEW: ID for the slow 15s poll when chat is closed
+        let hasUnreadMessages = false; 
+        let isChatFloating = false;
+        let isChatOpen = false; 
+        let lastAcknowledgedIncomingContent = ""; // RENAMED: Used to track the last message the user saw/acknowledged
 
         // Alarm Variables
         let alarmTimeoutId = null;
@@ -970,15 +1237,60 @@
         ];
         let quickNotes = JSON.parse(JSON.stringify(DEFAULT_QUICK_NOTES));
 
+        // --- NEW CHAT POLLING MANAGEMENT ---
+        
+        function startBackgroundChatPolling() {
+            stopBackgroundChatPolling(); // Ensure only one is running
+            if (currentUser) {
+                // Poll every 15 seconds when chat is closed
+                backgroundChatPollId = setInterval(() => fetchChatHistory(false), 15000); 
+            }
+        }
+
+        function stopBackgroundChatPolling() {
+            if (backgroundChatPollId) {
+                clearInterval(backgroundChatPollId);
+                backgroundChatPollId = null;
+            }
+        }
+
         // --- NEW CHAT FUNCTIONS ---
+
+        function updateChatNotification() {
+            const badge = document.getElementById('chat-notification-badge');
+            if (badge) {
+                // The badge should only display if hasUnreadMessages is true
+                badge.style.display = hasUnreadMessages ? 'block' : 'none';
+            }
+        }
+
+        /**
+         * Appends a message to the chat window with special styling for System/Admin messages.
+         */
         function appendMessage(sender, message, isOutgoing) {
             const messagesDiv = document.getElementById('chat-messages');
             const messageEl = document.createElement('div');
             messageEl.classList.add('chat-message');
-            messageEl.classList.add(isOutgoing ? 'outgoing' : 'incoming');
+            
+            const isSystemOrAdmin = sender.toLowerCase() === 'system' || sender.toLowerCase() === 'admin';
+            
+            // Set class based on sender type
+            if (isSystemOrAdmin) {
+                messageEl.classList.add('system-message');
+            } else {
+                messageEl.classList.add(isOutgoing ? 'outgoing' : 'incoming');
+            }
+            
+            // Prepare Sender Name with unique icon/label (The "Surprise me" element)
+            let displaySender = sender;
+            if (sender.toLowerCase() === 'system') {
+                displaySender = '⚙️ System Announcement';
+            } else if (sender.toLowerCase() === 'admin') {
+                displaySender = '🛡️ Admin Broadcast';
+            }
             
             const senderSpan = document.createElement('strong');
-            senderSpan.textContent = sender;
+            senderSpan.textContent = displaySender;
             const textNode = document.createTextNode(message);
             
             messageEl.appendChild(senderSpan);
@@ -992,50 +1304,143 @@
                 alert("Please log in to use the Team Chat feature.");
                 return;
             }
-            document.getElementById('chat-modal').style.display = 'flex';
+            const chatModal = document.getElementById('chat-modal');
+            
+            // 1. Set chat open state
+            isChatOpen = true; 
+            
+            // 2. Stop slow poll, start fast poll
+            stopBackgroundChatPolling();
+            if (chatPollIntervalId) clearInterval(chatPollIntervalId);
+            // Fast poll (runs acknowledgment logic internally if isChatOpen is true)
+            chatPollIntervalId = setInterval(() => fetchChatHistory(false), 5000); 
+            
+            // 3. Initial positioning if not already floating (draggable)
+            if (!isChatFloating) {
+                chatModal.style.position = 'fixed';
+                chatModal.style.right = '20px';
+                chatModal.style.bottom = '-650px'; 
+                chatModal.style.top = 'auto'; 
+                chatModal.style.width = '400px'; 
+                chatModal.style.height = '600px'; 
+                chatModal.classList.remove('floating');
+                chatModal.style.zIndex = ++zIndexCounter; 
+            } else {
+                bringToFront(chatModal);
+            }
+            
+            chatModal.style.display = 'flex';
+            
+            // 4. Animate slide-up (Only if fixed/not floating)
+            if (!isChatFloating) {
+                 setTimeout(() => {
+                    chatModal.style.bottom = '20px'; 
+                 }, 50);
+            }
+            
             document.getElementById('chat-input').focus();
-            fetchChatHistory();
-            // Start polling for new messages every 5 seconds
-            chatPollIntervalId = setInterval(fetchChatHistory, 5000);
+            // 5. Initial fetch AND acknowledge all messages
+            fetchChatHistory(true); 
         }
         
         function closeChat() {
-            document.getElementById('chat-modal').style.display = 'none';
+            // 1. Set chat closed state
+            isChatOpen = false;
+            
+            // 2. Stop fast poll, resume slow background poll
             if (chatPollIntervalId) {
                 clearInterval(chatPollIntervalId);
                 chatPollIntervalId = null;
             }
+            startBackgroundChatPolling();
+            
+            const chatModal = document.getElementById('chat-modal');
+            
+            // 3. Animate slide-down if fixed
+            if (!isChatFloating) {
+                chatModal.style.bottom = '-650px';
+                setTimeout(() => {
+                    chatModal.style.display = 'none';
+                }, 300); // Wait for transition to finish
+            } else {
+                // If floating, just hide immediately
+                chatModal.style.display = 'none';
+            }
+            
+            // 4. Update notification immediately to reflect current read status
+            updateChatNotification(); 
         }
         
-        async function fetchChatHistory() {
+        /**
+         * Fetches chat history and updates state.
+         * @param {boolean} isAcknowledging - True if the user is opening the chat and we should mark all messages as read.
+         */
+        async function fetchChatHistory(isAcknowledging = false) {
+            if (!currentUser) {
+                stopBackgroundChatPolling();
+                return;
+            }
+            
             const messagesDiv = document.getElementById('chat-messages');
-            const wasScrolledToBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop <= messagesDiv.clientHeight + 10;
+            
             try {
                 const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=chat_history&username=${encodeURIComponent(currentUser)}&password=${encodeURIComponent(currentPassword)}`);
                 const result = await response.json();
 
                 if (result.status === 'success' && Array.isArray(result.data)) {
-                    // Clear and rebuild chat history
-                    messagesDiv.innerHTML = '';
-                    result.data.forEach(msg => {
-                        const sender = msg.sender || 'System';
-                        const message = msg.message || 'No Content';
-                        const isOutgoing = sender.toLowerCase() === currentUser.toLowerCase();
-          
-                        appendMessage(sender, message, isOutgoing);
-                    });
-                    if (wasScrolledToBottom) {
-                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    
+                    const latestMessages = result.data;
+
+                    // 1. Find the content of the absolute last message sent by another user
+                    const lastIncoming = latestMessages.slice().reverse().find(msg => 
+                        (msg.sender || 'System').toLowerCase() !== currentUser.toLowerCase()
+                    );
+                    
+                    let newLatestIncomingContent = lastIncoming ? (lastIncoming.message || '') : '';
+                    
+                    // --- Notification Detection Logic (Always runs) ---
+                    if (newLatestIncomingContent && (newLatestIncomingContent !== lastAcknowledgedIncomingContent)) {
+                        hasUnreadMessages = true; // New message detected
+                    }
+                    
+                    // --- Acknowledgement Logic (FIXED) ---
+                    // Acknowledge if explicitly requested (like on openChat) OR if the chat window is currently visible (isChatOpen).
+                    if (isAcknowledging || isChatOpen) { 
+                        lastAcknowledgedIncomingContent = newLatestIncomingContent;
+                        hasUnreadMessages = false;
+                    }
+
+                    // 2. Update notification badge (Always runs)
+                    updateChatNotification(); 
+                    
+                    // 3. Clear and rebuild chat history (ONLY if chat is open)
+                    if (isChatOpen) { 
+                        // Check scroll position before fetching
+                        const wasScrolledToBottom = (messagesDiv.scrollHeight - messagesDiv.scrollTop <= messagesDiv.clientHeight + 10);
+                        
+                        messagesDiv.innerHTML = '';
+                        latestMessages.forEach(msg => {
+                            const sender = msg.sender || 'System';
+                            const message = msg.message || 'No Content';
+                            const isOutgoing = sender.toLowerCase() === currentUser.toLowerCase();
+                            appendMessage(sender, message, isOutgoing);
+                        });
+                        
+                        // 4. Maintain scroll position if user was at the bottom
+                        if (wasScrolledToBottom) {
+                            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                        }
                     }
 
                 } else if (result.status === 'error' && result.message === 'user_not_found') {
-                    // This could happen if session expires, just log it.
                     console.error("Chat history fetch failed: User not logged in.");
+                    // Stop polling if login state is bad
+                    if (isChatOpen) closeChat();
+                    stopBackgroundChatPolling();
                 }
 
             } catch (e) {
                 console.error("Error fetching chat history:", e);
-                // Optionally show error in chat window
             }
         }
 
@@ -1062,10 +1467,8 @@
                 const result = await response.json();
                 
                 if (result.status === 'success') {
-                    // Add message locally and refresh history
-                    // We call fetchChatHistory to ensure consistency and display messages from others.
                     input.value = '';
-                    fetchChatHistory();
+                    fetchChatHistory(false); // Refetch after sending (no explicit acknowledgment needed, relying on isChatOpen logic)
                 } else {
                     alert("Failed to send message: " + (result.message || 'Unknown error'));
                     appendMessage('System', 'Failed to send message.', false);
@@ -1080,6 +1483,71 @@
                 input.focus();
             }
         }
+        
+        // --- CHAT DRAGGABLE LOGIC (NEW) ---
+        function makeChatDraggable(chatElement) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            const dragHandle = chatElement.querySelector('#chat-header');
+
+            function dragMouseDown(e) {
+                if (chatElement.style.display === 'none') return;
+                
+                e = e || window.event;
+                // Don't drag if clicking the close button
+                if (e.target.closest('button') && e.target.closest('button').textContent === 'X') {
+                     return; 
+                }
+
+                e.preventDefault();
+                
+                // --- Switch to Floating (Draggable) Mode if not already floating ---
+                if (!isChatFloating) {
+                    isChatFloating = true;
+                    chatElement.classList.add('floating'); 
+                    chatElement.style.position = 'absolute'; 
+                    // Calculate current center point to set initial absolute position
+                    const rect = chatElement.getBoundingClientRect();
+                    chatElement.style.left = (rect.left + window.scrollX) + 'px';
+                    chatElement.style.top = (rect.top + window.scrollY) + 'px';
+                    chatElement.style.right = 'auto';
+                    chatElement.style.bottom = 'auto';
+                }
+                
+                bringToFront(chatElement);
+                pos3 = e.clientX; 
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+            
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX; 
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                
+                let newTop = chatElement.offsetTop - pos2;
+                let newLeft = chatElement.offsetLeft - pos1;
+
+                // Apply Notepad-like boundary restrictions
+                newTop = Math.max(CONTROL_BAR_HEIGHT, newTop);
+                newLeft = Math.max(0, newLeft);
+                newLeft = Math.min(newLeft, window.innerWidth - chatElement.offsetWidth - SCROLLBAR_WIDTH);
+                
+                chatElement.style.top = newTop + "px";
+                chatElement.style.left = newLeft + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+            
+            dragHandle.onmousedown = dragMouseDown;
+        }
+
 
         // --- 2. LOGIN / LOGOUT LOGIC ---
         
@@ -1125,13 +1593,16 @@
                     } else {
                         createNewNotepad(false);
                     }
+                    
+                    // START CHAT POLLING
+                    startBackgroundChatPolling();
 
                 // 2. ERROR: Wrong Password
                 } else if (result.status === 'wrong_password') {
                     statusDiv.textContent = "❌ WRONG PASSWORD.";
                 // 3. ERROR: No Account
                 } else if (result.status === 'user_not_found') {
-                    statusDiv.textContent = "WALA KA PANG ACCOUNT, SABIHIN MO KAY LJ CALUCIN!";
+                    statusDiv.textContent = "WALA KA PANG ACCOUNT, SABIHIN MO KANYA!";
                 // 4. GENERIC ERROR: Any other status from the script
                 } else {
                     statusDiv.textContent = "ERROR: Could not connect to data. Try again.";
@@ -1154,7 +1625,7 @@
             
             resetToDefaults();
             closeChat();
-            // Close chat on logout
+            stopBackgroundChatPolling(); // Stop permanent polling on logout
         }
 
         function resetToDefaults() {
@@ -1458,7 +1929,7 @@
             const droppedItemIndex = parseInt(this.getAttribute('data-index'));
             
             if (draggedItemIndex !== droppedItemIndex) {
-                // 1. Capture current DOM state before moving to ensure unsaved edits aren't lost
+                // 1. Capture current DOM state before moving to ensure unsaved edits aren.t lost
                 saveQuickNotes(); 
 
                 // 2. Reorder Array
@@ -2052,54 +2523,165 @@
             setInterval(update, 1000);
         }
 
-        // --- ALARM FUNCTIONS ---
-        function toggleAlarmMenu() {
-            const dropdown = document.getElementById('alarm-dropdown');
-            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-        }
+        // --- UPDATED ALARM FUNCTIONS ---
+        let currentAlarmLabel = "Time's up!";
+        let selectedTimerMinutes = 0;
 
-        // Close dropdown when clicking outside
-        window.onclick = function(event) {
-            if (!event.target.matches('#alarm-btn') && !event.target.closest('#alarm-dropdown') && !event.target.closest('#chat-modal')) {
-                document.getElementById('alarm-dropdown').style.display = 'none';
+        function openAlarmModal() {
+            document.getElementById('alarm-setup-modal').style.display = 'flex';
+            
+            // Check if alarm is already running to show cancel button inside modal
+            const activeControls = document.getElementById('active-alarm-controls');
+            if (alarmTimeoutId) {
+                activeControls.style.display = 'block';
+                document.getElementById('active-alarm-status-text').textContent = "Alarm is Running";
+            } else {
+                activeControls.style.display = 'none';
             }
         }
 
-        function setAlarm(minutes) {
-            cancelAlarm();
-            // Clear existing
+        function closeAlarmModal() {
+            document.getElementById('alarm-setup-modal').style.display = 'none';
+        }
+
+        function switchAlarmTab(mode) {
+            document.getElementById('view-timer').style.display = mode === 'timer' ? 'block' : 'none';
+            document.getElementById('view-alarm').style.display = mode === 'alarm' ? 'block' : 'none';
+            
+            document.getElementById('tab-timer').classList.toggle('active', mode === 'timer');
+            document.getElementById('tab-alarm').classList.toggle('active', mode === 'alarm');
+        }
+
+        // Logic for Timer Presets (Visible Selector)
+        function selectTimerPreset(mins, btnElement) {
+            selectedTimerMinutes = mins;
+            document.getElementById('custom-timer-mins').value = ''; // Clear custom input
+            
+            // Visual highlight logic
+            document.querySelectorAll('.timer-presets button').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+        }
+
+        function clearTimerPresets() {
+            selectedTimerMinutes = 0; // Reset preset if user types in custom
+            document.querySelectorAll('.timer-presets button').forEach(btn => btn.classList.remove('selected'));
+        }
+
+        function confirmAlarmSet() {
+            const isTimerMode = document.getElementById('view-timer').style.display !== 'none';
+            
+            if (isTimerMode) {
+                // --- TIMER MODE LOGIC ---
+                let minutes = selectedTimerMinutes;
+                const customMins = document.getElementById('custom-timer-mins').value;
+                if (customMins) minutes = parseInt(customMins);
+
+                if (!minutes || minutes <= 0) {
+                    alert("Please select a time duration.");
+                    return;
+                }
+
+                const label = document.getElementById('timer-label').value.trim() || "Time's up!";
+                setAlarm(minutes, label);
+
+            } else {
+                // --- ALARM MODE LOGIC (PH TIME) ---
+                const timeInput = document.getElementById('alarm-time-input').value;
+                if (!timeInput) {
+                    alert("Please select a time.");
+                    return;
+                }
+
+                const label = document.getElementById('alarm-label').value.trim() || "Alarm!";
+                setSpecificAlarm(timeInput, label);
+            }
+
+            closeAlarmModal();
+        }
+
+        // Sets a duration-based timer
+        function setAlarm(minutes, label) {
+            cancelAlarm(); // Clear existing
             
             const now = new Date();
             alarmTargetTime = new Date(now.getTime() + minutes * 60000);
-            
+            currentAlarmLabel = label;
+
             // Set Timer
             alarmTimeoutId = setTimeout(triggerAlarm, minutes * 60000);
-            // Update UI
-            document.getElementById('alarm-dropdown').style.display = 'none';
-            document.getElementById('cancel-alarm-btn').style.display = 'block';
-            const btn = document.getElementById('alarm-btn');
-            btn.style.backgroundColor = '#ffcc00';
-            btn.style.color = '#000';
+            
+            // Visual Updates
+            updateAlarmButtonVisuals(true);
+            
             // Start Interval to update status text inside button
             updateAlarmStatus();
             alarmIntervalId = setInterval(updateAlarmStatus, 1000);
+        }
+
+        // Sets a specific time alarm based on PH Time
+        function setSpecificAlarm(timeString, label) {
+            cancelAlarm();
+
+            // 1. Get current time in Manila
+            const now = new Date();
+            const phTimeStr = now.toLocaleString('en-US', { timeZone: 'Asia/Manila' });
+            const phNow = new Date(phTimeStr);
+
+            // 2. Parse target time (HH:MM)
+            const [hours, minutes] = timeString.split(':').map(Number);
+            
+            // 3. Create target date object
+            const target = new Date(phNow);
+            target.setHours(hours, minutes, 0, 0);
+
+            // 4. If target is in the past, add 1 day
+            if (target <= phNow) {
+                target.setDate(target.getDate() + 1);
+            }
+
+            const diffMs = target - phNow;
+            currentAlarmLabel = label;
+            alarmTargetTime = new Date(now.getTime() + diffMs); // Sync to local browser counter
+
+            alarmTimeoutId = setTimeout(triggerAlarm, diffMs);
+            
+            updateAlarmButtonVisuals(true);
+            updateAlarmStatus();
+            alarmIntervalId = setInterval(updateAlarmStatus, 1000);
+        }
+
+        function updateAlarmButtonVisuals(active) {
+            const btn = document.getElementById('alarm-btn');
+            if (active) {
+                btn.style.backgroundColor = '#ffcc00';
+                btn.style.color = '#000';
+            } else {
+                btn.textContent = "⏰";
+                btn.style.backgroundColor = '';
+                btn.style.color = '';
+            }
         }
 
         function updateAlarmStatus() {
             if (!alarmTargetTime) return;
             const now = new Date();
             const diff = alarmTargetTime - now;
-            
             const btn = document.getElementById('alarm-btn');
+            
             if (diff <= 0) {
-                // Should trigger, but reset text just in case
                 btn.textContent = "⏰";
                 return;
             }
 
+            // Show Hours if > 60m, else show Minutes
             const minutesLeft = Math.ceil(diff / 60000);
-            // Replaces "⏰" with "🔔 14m"
-            btn.textContent = `🔔 ${minutesLeft}m`;
+            if (minutesLeft > 60) {
+                const h = Math.floor(minutesLeft / 60);
+                const m = minutesLeft % 60;
+                btn.textContent = `🔔 ${h}h ${m}m`;
+            } else {
+                btn.textContent = `🔔 ${minutesLeft}m`;
+            }
         }
 
         function cancelAlarm() {
@@ -2108,23 +2690,22 @@
             alarmTimeoutId = null;
             alarmIntervalId = null;
             alarmTargetTime = null;
+            updateAlarmButtonVisuals(false);
             
-            const btn = document.getElementById('alarm-btn');
-            btn.textContent = "⏰";
-            // Reset icon
-            btn.style.backgroundColor = '';
-            // Reset colors
-            btn.style.color = '';
-            
-            document.getElementById('cancel-alarm-btn').style.display = 'none';
-            document.getElementById('alarm-dropdown').style.display = 'none';
+            // Hide cancel controls inside modal if open
+            document.getElementById('active-alarm-controls').style.display = 'none';
         }
 
         function triggerAlarm() {
             document.getElementById('alarm-ringing-modal').style.display = 'flex';
+            // UPDATE THE TEXT WITH CUSTOM LABEL
+            document.getElementById('ringing-message').textContent = currentAlarmLabel;
+            
             try { alarmSound.play(); } catch(e) { console.log("Audio blocked"); }
-            cancelAlarm();
-            // Reset timer logic, but modal stays open
+            
+            // Clear timer logic, but keep modal open
+            if (alarmIntervalId) clearInterval(alarmIntervalId);
+            updateAlarmButtonVisuals(false);
         }
 
         function stopAlarm() {
@@ -2135,7 +2716,7 @@
 
         function snoozeAlarm() {
             stopAlarm();
-            setAlarm(10); // Snooze for 10 mins
+            setAlarm(10, "Snoozed: " + currentAlarmLabel); 
         }
 
         function initialize() {
@@ -2144,6 +2725,9 @@
             loadQuickNotes(); // Loads from local storage (for guest/session)
             loadBackgroundImage();
             startPhilippineClock(); 
+            makeChatDraggable(document.getElementById('chat-modal')); // EXISTING
+            
+            // REMOVED: The previous complex click/read acknowledgment logic.
             
             // Show login modal on start
             document.getElementById('login-overlay').style.display = 'flex';
