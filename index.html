@@ -220,17 +220,31 @@
             gap: 8px;
         }
 
-        #ph-clock {
-            background: rgba(0, 0, 0, 0.8);
-            color: #00ff9d;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            font-size: 14px;
-            border: 1px solid #333;
-            box-shadow: 0 0 5px rgba(0, 255, 157, 0.2);
-        }
+#ph-clock {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 0 5px rgba(0, 255, 157, 0.2);
+
+    color: #fff;
+    border: 1px solid #fff;
+
+    animation: rainbowBright 4s linear infinite;
+}
+
+@keyframes rainbowBright {
+    0%   { color: #ff3b3b; border-color: #ff3b3b; } /* bright red */
+    16%  { color: #ff8c1a; border-color: #ff8c1a; } /* neon orange */
+    33%  { color: #ffe600; border-color: #ffe600; } /* yellow */
+    50%  { color: #32ff32; border-color: #32ff32; } /* bright lime green */
+    66%  { color: #33ccff; border-color: #33ccff; } /* sky blue */
+    83%  { color: #cc66ff; border-color: #cc66ff; } /* bright neon purple */
+    100% { color: #ff3b3b; border-color: #ff3b3b; } /* back to red */
+}
+
 
         #alarm-wrapper {
             position: relative;
