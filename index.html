@@ -2339,7 +2339,7 @@
             if (data.isQuickNotesPad) newNotepad.setAttribute('data-quick-notes', 'true');
 
             const contentDivId = `text-${data.id}`;
-            const lockEmoji = data.isLocked ? '🔓' : '🔒';
+            const lockEmoji = data.isLocked ? '🔒' : '🔓';
             let innerHTML = `
                 <div class="notepad-header">
                     <span class="notepad-title" data-draggable-handle="true">${data.title}</span>
