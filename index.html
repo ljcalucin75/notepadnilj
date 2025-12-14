@@ -1616,7 +1616,7 @@
                     statusDiv.textContent = "❌ WRONG PASSWORD.";
                 // 3. ERROR: No Account
                 } else if (result.status === 'user_not_found') {
-                    statusDiv.textContent = "WALA KA PANG ACCOUNT, SABIHIN MO KANYA!";
+                    statusDiv.textContent = "WALA KA PANG ACCOUNT, SABIHIN MO KAY LJ CALUCIN!";
                 // 4. GENERIC ERROR: Any other status from the script
                 } else {
                     statusDiv.textContent = "ERROR: Could not connect to data. Try again.";
@@ -2439,7 +2439,7 @@
             const notepad = document.getElementById(notepadId);
             const lockButton = notepad.querySelector('.lock-btn');
             const isLocked = notepad.classList.toggle('locked');
-            lockButton.textContent = isLocked ? '🔓' : '🔒'; 
+            lockButton.textContent = isLocked ? '🔒' : '🔓'; 
             isLocked ? notepad.disableDrag() : notepad.enableDrag();
         }
 
