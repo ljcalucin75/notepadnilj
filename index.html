@@ -102,23 +102,27 @@
 
         /* --- Master Control Panel (Compact) --- */
         #controls {
-            position: sticky;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 8px 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            z-index: 9999;
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-            align-items: center;
-            backdrop-filter: blur(8px); 
-            -webkit-backdrop-filter: blur(8px);
-            background-color: rgba(255, 255, 255, 0.2);
-            overflow-x: auto;
-            overflow-y: hidden;
-        }
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 8px 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    align-items: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.2);
+
+    /* ✅ REQUIRED FOR WRAPPING BEHAVIOR */
+    flex-wrap: wrap;        /* buttons go down instead of scrolling */
+    overflow-x: hidden;     /* no horizontal scrollbar */
+    overflow-y: visible;
+}
+
         
         #toolbar-bg-mirror {
             position: absolute;
@@ -1209,6 +1213,30 @@
     </div>
 
     <script>
+      /* ================= TOOLBAR HEIGHT AUTO-ADJUST ================= */
+
+function updateControlBarHeight() {
+    const controls = document.getElementById('controls');
+    if (!controls) return;
+
+    const newHeight = controls.offsetHeight;
+
+    if (newHeight !== CONTROL_BAR_HEIGHT) {
+        const diff = newHeight - CONTROL_BAR_HEIGHT;
+        CONTROL_BAR_HEIGHT = newHeight;
+
+        // Move all notepads down/up to avoid toolbar overlap
+        document.querySelectorAll('.notepad').forEach(note => {
+            const currentTop = note.offsetTop;
+            note.style.top = Math.max(CONTROL_BAR_HEIGHT + 10, currentTop + diff) + 'px';
+        });
+    }
+}
+
+// CTRL + scroll (zoom) triggers resize
+window.addEventListener('resize', updateControlBarHeight);
+window.addEventListener('load', updateControlBarHeight);
+
         // --- 1. GLOBAL VARIABLES & INITIAL SETUP ---
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvdYP2SVZ_OWKeFGeaFOiRN_fOk68JVSQq0aPQNgospQszkwl2jCBlwiDT2Fr-kbXo0g/exec";
         let zIndexCounter = 1000;
