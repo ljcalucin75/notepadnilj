@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" style="--control-height: 50px; --background-url: url('https://www.hdwallpapers.in/download/bob_the_minion_in_coat_suit_with_guns_4k_hd_minions-3840x2160.jpg');"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html lang="en" style="--control-height: 50px; --background-url: none;"><head><link rel="icon" href="favicon.png">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NOTEPAD NI LJ!!</title>
@@ -10,7 +11,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Updated Font for sleekness */
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #5C5C5C;
@@ -24,62 +25,214 @@
             overflow-x: hidden;
         }
 
-        /* --- Login Modal Styles --- */
+        /* =========================================
+           UPDATED LOGIN PAGE STYLES (Glassmorphism)
+           ========================================= */
         #login-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.95);
+            /* Purple Gradient Background matching the reference */
+            background: linear-gradient(135deg, #E0C3FC 0%, #8EC5FC 100%);
+            background: linear-gradient(to bottom right, #d4a5ff, #a68eff, #6b66ff);
             z-index: 20000;
             display: flex;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(5px);
+            overflow: hidden;
         }
-        #login-box {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+
+        /* Decorative Spheres in Background */
+        .login-sphere {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.1) 100%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        .sphere-1 {
+            width: 400px;
+            height: 400px;
+            top: -50px;
+            left: -100px;
+            background: linear-gradient(to bottom right, #a18cd1 0%, #fbc2eb 100%);
+            opacity: 0.8;
+        }
+        .sphere-2 {
             width: 300px;
+            height: 300px;
+            bottom: -50px;
+            right: -50px;
+            background: linear-gradient(to top left, #84fab0 0%, #8fd3f4 100%);
+            opacity: 0.6;
         }
-        #login-box h2 { margin-top: 0; color: #333;
+        .sphere-3 {
+            width: 150px;
+            height: 150px;
+            top: 20%;
+            right: 25%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(150,150,255,0.4));
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Main Glass Card Container */
+        #login-wrapper {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            width: 900px;
+            max-width: 95%;
+            height: 550px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Left Side (Marketing/Logo) */
+        .login-left {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            position: relative;
+        }
+
+        .login-logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: auto; /* Push to top */
+        }
+        .login-logo::before {
+            content: '';
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50% 0 50% 50%;
+        }
+
+        .login-left h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin: 20px 0;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .login-left p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            line-height: 1.5;
+            max-width: 80%;
+        }
+
+        /* 3D Sphere inside the card for effect */
+        .card-decoration-sphere {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            border-radius: 50%;
+            top: 20%;
+            left: 10%;
+            z-index: -1;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Right Side (Form) */
+        .login-right {
+            flex: 0.8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* The Frosted Login Box */
+        #login-box {
+            
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            width: 320px;
+
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        #login-box h2 {
+            margin: 0 0 5px 0; 
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        #login-box p {
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            margin-bottom: 20px;
         }
         
         #login-box input {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px; /* Slightly sharper than pill */
+            font-size: 14px;
             box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            outline: none;
+            transition: box-shadow 0.3s;
+        }
+        
+        #login-box input:focus {
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
         }
         
         #login-box button {
-            width: 90%;
-            padding: 10px;
-            background-color: #007bff;
+            width: 100%;
+            padding: 12px;
+            background-color: #000; /* Black button like image */
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
             cursor: pointer;
             margin-top: 10px;
+            display: flex;
+            justify-content: space-between; /* Arrow to right */
+            align-items: center;
+            padding-left: 20px;
+            padding-right: 20px;
         }
-        #login-box button:hover { background-color: #0056b3;
+        #login-box button:hover { 
+            background-color: #333;
         }
+        
         #login-status { 
-            margin-top: 15px;
-            color: #dc3545; 
-            font-size: 14px; 
+            margin-top: 10px;
+            color: #ffcccc; 
+            font-size: 12px; 
             font-weight: bold; 
             min-height: 20px; 
-            line-height: 1.4;
-            text-transform: uppercase;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
 
         /* --- User Info Display in Controls --- */
@@ -102,26 +255,26 @@
 
         /* --- Master Control Panel (Compact) --- */
         #controls {
-    position: sticky;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 8px 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    z-index: 9999;
-    display: flex;
-    gap: 8px;
-    margin-bottom: 10px;
-    align-items: center;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    background-color: rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 8px 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.2);
 
-    /* ✅ REQUIRED FOR WRAPPING BEHAVIOR */
-    flex-wrap: wrap;        /* buttons go down instead of scrolling */
-    overflow-x: hidden;     /* no horizontal scrollbar */
-    overflow-y: visible;
-}
+            /* ✅ REQUIRED FOR WRAPPING BEHAVIOR */
+            flex-wrap: wrap;        /* buttons go down instead of scrolling */
+            overflow-x: hidden;     /* no horizontal scrollbar */
+            overflow-y: visible;
+        }
 
         
         #toolbar-bg-mirror {
@@ -1053,17 +1206,36 @@
     </style>
 </head>
 <body>
+    
     <div id="login-overlay">
-        <div id="login-box">
-            <h2>Notepad Login</h2>
-            <p>Enter credentials to load your workspace.</p>
+        <div class="login-sphere sphere-1"></div>
+        <div class="login-sphere sphere-2"></div>
+        <div class="login-sphere sphere-3"></div>
+
+        <div id="login-wrapper">
+            <div class="login-left">
+                <div class="card-decoration-sphere"></div> <div class="login-logo">Notepad ni LJ</div>
+                <h1>A Simple Space for <br>Your Ideas.</h1><br><br>
+                <p>A clean, customizable notepad designed for writing, planning, and organizing your thoughts.
+
+Create notes, personalize your workspace, and focus on what matters..</p>
+            </div>
+
+            <div class="login-right">
+                <div id="login-box">
+                    <h2>Welcome Back</h2>
+                    <p>LOG IN TO CONTINUE</p>
+                    
+                    <input type="text" id="username-input" placeholder="Username" onkeydown="if(event.key==='Enter') loginUser()">
+                    <input type="password" id="password-input" placeholder="Password" onkeydown="if(event.key==='Enter') loginUser()">
             
-            <input type="text" id="username-input" placeholder="Username" onkeydown="if(event.key==='Enter') loginUser()">
-            <input type="password" id="password-input" placeholder="Password" onkeydown="if(event.key==='Enter') loginUser()">
-      
-            
-            <button onclick="loginUser()">Login</button>
-            <div id="login-status"></div>
+                    <button onclick="loginUser()">
+                        Proceed to my Workspace
+                        <span>→</span>
+                    </button>
+                    <div id="login-status"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1243,8 +1415,9 @@ window.addEventListener('load', updateControlBarHeight);
         let notepadCounter = 2;
         let activeZoomNoteIndex = null;
         let draggedItemIndex = null; 
-        const NOTES_STORAGE_KEY = 'quickNotesList';
-        const PRESET_STORAGE_KEY = 'notepadLayoutPreset';
+        
+        // REMOVED LOCAL STORAGE KEYS
+        
         let CONTROL_BAR_HEIGHT = 80; 
         const MIN_NOTEPAD_SIZE = 100;
         const SCROLLBAR_WIDTH = 17;
@@ -1676,9 +1849,7 @@ window.addEventListener('load', updateControlBarHeight);
             });
             clearBackgroundImage();
             quickNotes = JSON.parse(JSON.stringify(DEFAULT_QUICK_NOTES));
-            localStorage.removeItem(NOTES_STORAGE_KEY);
-            localStorage.removeItem('backgroundImageUrl');
-            localStorage.removeItem(PRESET_STORAGE_KEY);
+            // REMOVED LOCAL STORAGE CLEARING
             cancelAlarm();
         }
 
@@ -1906,19 +2077,16 @@ window.addEventListener('load', updateControlBarHeight);
                     if (hexInput) quickNotes[index].color = hexInput.value;
                 }
             });
-            localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(quickNotes));
+            // REMOVED LOCAL STORAGE SAVING
             refreshAllButtons();
             const saveBtn = document.getElementById('save-notes-btn');
             const originalText = saveBtn.innerHTML;
-            saveBtn.innerHTML = '✅ Applied (Local)';
+            saveBtn.innerHTML = '✅ Applied (Session)';
             setTimeout(() => { saveBtn.innerHTML = originalText; }, 1000);
         }
 
         function loadQuickNotes() {
-            try {
-                const savedNotes = localStorage.getItem(NOTES_STORAGE_KEY);
-                if (savedNotes) quickNotes = JSON.parse(savedNotes);
-            } catch (e) {}
+            // REMOVED LOCAL STORAGE LOADING
         }
 
         function updateQuickNote(index, field, value, shouldSave = true) {
@@ -2203,19 +2371,15 @@ window.addEventListener('load', updateControlBarHeight);
             const url = document.getElementById('bg-url').value.trim();
             if (!url) { alert('Invalid URL'); return; }
             document.documentElement.style.setProperty('--background-url', `url('${url}')`);
-            localStorage.setItem('backgroundImageUrl', url);
+            // REMOVED LOCAL STORAGE
         }
         function clearBackgroundImage() {
             document.documentElement.style.setProperty('--background-url', 'none');
             document.getElementById('bg-url').value = '';
-            localStorage.removeItem('backgroundImageUrl');
+            // REMOVED LOCAL STORAGE
         }
         function loadBackgroundImage() {
-            const savedUrl = localStorage.getItem('backgroundImageUrl');
-            if (savedUrl) {
-                document.documentElement.style.setProperty('--background-url', `url('${savedUrl}')`);
-                document.getElementById('bg-url').value = savedUrl;
-            }
+            // REMOVED LOCAL STORAGE
         }
         
         // *** UPDATED SAVE: SPLIT INTO 4 CELLS (PARTS) ***
@@ -2247,16 +2411,22 @@ window.addEventListener('load', updateControlBarHeight);
                 });
             });
             // Package layout, quickNotes, and background
+            // Background is now just pulled from the CSS var since we don't use local storage
+            let bgUrl = '';
+            const bgValue = getComputedStyle(document.documentElement).getPropertyValue('--background-url');
+            if (bgValue && bgValue !== 'none' && bgValue.includes('url')) {
+                bgUrl = bgValue.replace(/url\(['"]?(.*?)['"]?\)/, '$1');
+            }
+
             const fullUserData = {
                 layout: layoutData,
                 quickNotes: quickNotes,
-                background: localStorage.getItem('backgroundImageUrl') ||
-                ''
+                background: bgUrl
             };
 
             const jsonString = JSON.stringify(fullUserData);
-            // 1. Save to local storage (backup)
-            localStorage.setItem(PRESET_STORAGE_KEY, jsonString);
+            // REMOVED LOCAL STORAGE SAVE
+            
             // 2. Save to Google Sheets (Cloud) - Split into 4 parts
             const saveBtn = document.getElementById('save-preset-btn');
             saveBtn.textContent = "⏳ Saving...";
@@ -2326,15 +2496,14 @@ window.addEventListener('load', updateControlBarHeight);
                     // Restore Quick Notes
                     if (parsedData.quickNotes) {
                         quickNotes = parsedData.quickNotes;
-                        localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(quickNotes));
-  
+                        // REMOVED LOCAL STORAGE SET
                     }
 
                     // Restore Background
                     if (parsedData.background) {
                         document.documentElement.style.setProperty('--background-url', `url('${parsedData.background}')`);
                         document.getElementById('bg-url').value = parsedData.background;
-                        localStorage.setItem('backgroundImageUrl', parsedData.background);
+                        // REMOVED LOCAL STORAGE SET
                     } else {
                         clearBackgroundImage();
                     }
@@ -2764,12 +2933,10 @@ window.addEventListener('load', updateControlBarHeight);
         function initialize() {
             CONTROL_BAR_HEIGHT = document.getElementById('controls').offsetHeight + 2;
             document.documentElement.style.setProperty('--control-height', `${CONTROL_BAR_HEIGHT}px`);
-            loadQuickNotes(); // Loads from local storage (for guest/session)
-            loadBackgroundImage();
+            // REMOVED LOCAL STORAGE LOADERS
             startPhilippineClock(); 
-            makeChatDraggable(document.getElementById('chat-modal')); // EXISTING
+            makeChatDraggable(document.getElementById('chat-modal')); 
             
-            // REMOVED: The previous complex click/read acknowledgment logic.
             
             // Show login modal on start
             document.getElementById('login-overlay').style.display = 'flex';
